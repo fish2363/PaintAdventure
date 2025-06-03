@@ -30,7 +30,7 @@ public class Chick : Entity,IEntityComponent
         _movement.RbCompo.useGravity = false;
         _entityVFX.PlayVfx("FeatherExplosion", Vector3.zero, Quaternion.identity);
         _animator.SetInteger("animation", 3);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         _animator.SetInteger("animation", 0);
         _movement.RbCompo.useGravity = true;
     }

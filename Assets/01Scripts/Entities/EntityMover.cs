@@ -5,6 +5,7 @@ using UnityEngine.Events;
 public class EntityMover : MonoBehaviour, IEntityComponent
 {
     #region Member field
+    private Entity _entity;
     public UnityEvent<Vector2> OnVelocity;
     [field: SerializeField] public float MoveSpeed { get; set; }
 
@@ -16,6 +17,7 @@ public class EntityMover : MonoBehaviour, IEntityComponent
 
     [SerializeField]
     private float _jumpPower;
+    [SerializeField] private float rotationSpeed = 8f;
 
     #endregion
 
@@ -29,6 +31,7 @@ public class EntityMover : MonoBehaviour, IEntityComponent
 
     public void Initialize(Entity entity)
     {
+        _entity = entity;
         RbCompo = entity.GetComponent<Rigidbody>();
         Debug.Assert(RbCompo != null, "이거 없음");
         _moveSpeedMultiplier = 1f;
@@ -46,18 +49,23 @@ public class EntityMover : MonoBehaviour, IEntityComponent
         right.Normalize();
         _velocity = forward * movementInput.y + right * movementInput.x;
     }
-    public void SetMovement(Vector2 moveDir)
-    {
-        if (moveDir.Equals(Vector2.zero)) return;
-        _velocity = new Vector3(moveDir.x, RbCompo.linearVelocity.y , moveDir.y);
-    }
-
 
     private void FixedUpdate()
     {
         if (CanManualMove)
-            RbCompo.linearVelocity = _velocity * MoveSpeed * _moveSpeedMultiplier;
+        {
+            Vector3 newVelocity = _velocity * MoveSpeed * _moveSpeedMultiplier;
+            newVelocity.y = RbCompo.linearVelocity.y; // 중력 보존
+            RbCompo.linearVelocity = newVelocity;
+        }
         OnVelocity?.Invoke(RbCompo.linearVelocity);
+
+        if (_velocity.magnitude > 0)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(_velocity);
+            Transform parent = _entity.transform;
+            parent.transform.rotation = Quaternion.Lerp(parent.transform.rotation, targetRotation, Time.fixedDeltaTime * rotationSpeed);
+        }
     }
 
     public void StopImmediately()
@@ -72,15 +80,21 @@ public class EntityMover : MonoBehaviour, IEntityComponent
     }
     public void Jump()
     {
-        Vector3 jumpVelocity = Vector3.up * Mathf.Sqrt(_jumpPower * -Physics.gravity.y);
+        Vector3 jumpVelocity = Vector3.up  * _jumpPower;
         AddForceToEntity(jumpVelocity);
     }
 
     public void AddForceToEntity(Vector3 force)
-        => RbCompo.AddForce(force, ForceMode.VelocityChange);
+        => RbCompo.AddForce(force, ForceMode.Impulse);
     public void SetAutoMovement(Vector3 autoMovement)
          => _autoMovement = autoMovement;
-
+    public void KnockBack(Vector2 force, float time)
+    {
+        CanManualMove = false;
+        StopImmediately();
+        AddForceToEntity(force);
+        DOVirtual.DelayedCall(time, () => CanManualMove = true);
+    }
     #region Check Collision
 
     public bool IsGroundDetected()

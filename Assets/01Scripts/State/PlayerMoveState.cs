@@ -21,10 +21,10 @@ public class PlayerMoveState : PlayerGroundState
         base.Update();
         Vector2 movementKey = _player.InputReader.MovementKey;
 
-        if (_mover.CanManualMove)
-            _mover.SetMovement(movementKey);
+        if (Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0 && _mover.CanManualMove)
+            _mover.SetMovementDirection(movementKey);
 
-        if (movementKey.magnitude < _inputThreshold || !_mover.CanManualMove)
+        if (movementKey.magnitude < _inputThreshold)
             _player.ChangeState("IDLE");
     }
 }

@@ -10,8 +10,8 @@ public class IronPlate : WeightObject
 
     private IEnumerator WaitRoutine()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         _RbCompo.useGravity = true;
-        _RbCompo.linearVelocity = Vector3.down * 30;
+        _RbCompo.linearVelocity = Vector3.down * 5;
     }
 }
