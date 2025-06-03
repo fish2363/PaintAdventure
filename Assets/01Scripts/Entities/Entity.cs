@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public class Entity : ExtendedMono
 {
     public bool IsDead { get; set; }
     protected Dictionary<Type, IEntityComponent> _components = new Dictionary<Type, IEntityComponent>();

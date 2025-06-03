@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class InteractableObject : ObjectUnit
+public interface IInteractableObject
 {
-    protected abstract void Interactable();
+    public void Interactable();
 }

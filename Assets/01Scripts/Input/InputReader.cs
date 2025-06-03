@@ -12,6 +12,7 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     private PlayerInput inputs;
 
     public event Action<bool> OnDrawingEvent;
+    public event Action OnJumpKeyEvent;
 
     private void OnEnable()
     {
@@ -47,6 +48,8 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (context.performed)
+            OnJumpKeyEvent?.Invoke();
     }
 
     public void OnMove(InputAction.CallbackContext context)
