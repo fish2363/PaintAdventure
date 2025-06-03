@@ -84,7 +84,7 @@ public class GestureRecognizer : MonoBehaviour
             {
                 points.Add(new Point(Input.mousePosition.x, Input.mousePosition.y, strokeId));
 
-                currentGestureLineRenderer.SetVertexCount(++vertexCount);
+                currentGestureLineRenderer.positionCount = ++vertexCount;
                 currentGestureLineRenderer.SetPosition(vertexCount - 1, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10)));
             }
         }
@@ -111,7 +111,7 @@ public class GestureRecognizer : MonoBehaviour
 
         Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
 
-        if (gestureResult.GestureClass == "Chick")
+        if (gestureResult.GestureClass == "FriendChiken")
         {
             Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
