@@ -1,15 +1,17 @@
 using System;
 using UnityEngine;
 
-public class EntityAnimatorTrigger : MonoBehaviour, IEntityComponent
+public class EntityAnimatorTrigger : MonoBehaviour
 {
     public Action OnAnimationEndTrigger;
     public event Action OnAttackVFXTrigger;
+    public event Action OnGetUpEvent;
 
-    private Entity _entity;
-    public void Initialize(Entity entity)
+    private EntityMMFeedback feedback;
+    //구조 진짜ㅇ언ㅁ루말ㅇㅁ웆보ㅠㅗ뮹
+    private void Start()
     {
-        _entity = entity;
+        feedback = FindAnyObjectByType<EntityMMFeedback>();
     }
 
     private void AnimationEnd()
@@ -19,4 +21,6 @@ public class EntityAnimatorTrigger : MonoBehaviour, IEntityComponent
     }
     
     private void PlayAttackVFX() => OnAttackVFXTrigger?.Invoke();
+    private void PlayCameraShakeFeedback() => feedback.PlayFeedback("CameraImpulse");
+    private void AfterFallingGetUp() => OnGetUpEvent?.Invoke();
 }

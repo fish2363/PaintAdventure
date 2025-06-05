@@ -13,6 +13,9 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
 
     public event Action<bool> OnDrawingEvent;
     public event Action OnJumpKeyEvent;
+    public event Action OnUniqueActivityKeyEvent;
+    public event Action OnCancelRunKeyEvent;
+    public event Action OnChangeKeyEvent;
 
     private void OnEnable()
     {
@@ -57,5 +60,17 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
         MovementKey = context.ReadValue<Vector2>();
     }
 
+    public void OnUniqueActivity(InputAction.CallbackContext context)
+    {
+        if (context.started)
+            OnUniqueActivityKeyEvent?.Invoke();
+        if (context.canceled)
+            OnCancelRunKeyEvent?.Invoke();
+    }
 
+    public void OnPlayerChange(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnChangeKeyEvent?.Invoke();
+    }
 }

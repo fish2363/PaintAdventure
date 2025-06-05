@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EntityAnimator : MonoBehaviour, IEntityComponent
 {
-    [SerializeField] private Animator animator;
+    public Animator animator;
 
     private Entity _entity;
     public void Initialize(Entity entity)

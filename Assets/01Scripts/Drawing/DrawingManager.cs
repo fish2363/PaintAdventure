@@ -27,7 +27,10 @@ public class DrawManager : MonoBehaviour,IEntityComponent
         _player = entity as Player;
         _player.InputReader.OnDrawingEvent += HandleDrawBtn;
     }
-
+    private void OnDestroy()
+    {
+        _player.InputReader.OnDrawingEvent -= HandleDrawBtn;
+    }
     private void HandleDrawBtn(bool isHoldPencil)
     {
         SetDrawingMode(isHoldPencil);

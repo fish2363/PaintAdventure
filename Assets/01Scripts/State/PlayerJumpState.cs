@@ -26,7 +26,7 @@ public class PlayerJumpState : PlayerAirState
 
     private void HandleVelocityChange(Vector2 velocity)
     {
-        if (velocity.y < 0)
+        if (velocity.y < -2f)
             _player.ChangeState("FALL");
     }
 }

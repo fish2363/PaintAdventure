@@ -71,6 +71,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UniqueActivity"",
+                    ""type"": ""Button"",
+                    ""id"": ""55318d82-0909-4fa5-8074-cb8eb69d7aa2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PlayerChange"",
+                    ""type"": ""Button"",
+                    ""id"": ""a4050edf-5e60-4a63-9018-e99539985d31"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +190,28 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Interactable"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2925b3f-4351-4738-80e3-d177aab18d76"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UniqueActivity"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0b784bd9-ca00-4f4b-93da-3c08dfdacb01"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PlayerChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -185,6 +225,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Draw = m_Player.FindAction("Draw", throwIfNotFound: true);
         m_Player_Click = m_Player.FindAction("Click", throwIfNotFound: true);
         m_Player_Interactable = m_Player.FindAction("Interactable", throwIfNotFound: true);
+        m_Player_UniqueActivity = m_Player.FindAction("UniqueActivity", throwIfNotFound: true);
+        m_Player_PlayerChange = m_Player.FindAction("PlayerChange", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -256,6 +298,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Draw;
     private readonly InputAction m_Player_Click;
     private readonly InputAction m_Player_Interactable;
+    private readonly InputAction m_Player_UniqueActivity;
+    private readonly InputAction m_Player_PlayerChange;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -265,6 +309,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Draw => m_Wrapper.m_Player_Draw;
         public InputAction @Click => m_Wrapper.m_Player_Click;
         public InputAction @Interactable => m_Wrapper.m_Player_Interactable;
+        public InputAction @UniqueActivity => m_Wrapper.m_Player_UniqueActivity;
+        public InputAction @PlayerChange => m_Wrapper.m_Player_PlayerChange;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -289,6 +335,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Interactable.started += instance.OnInteractable;
             @Interactable.performed += instance.OnInteractable;
             @Interactable.canceled += instance.OnInteractable;
+            @UniqueActivity.started += instance.OnUniqueActivity;
+            @UniqueActivity.performed += instance.OnUniqueActivity;
+            @UniqueActivity.canceled += instance.OnUniqueActivity;
+            @PlayerChange.started += instance.OnPlayerChange;
+            @PlayerChange.performed += instance.OnPlayerChange;
+            @PlayerChange.canceled += instance.OnPlayerChange;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -308,6 +360,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Interactable.started -= instance.OnInteractable;
             @Interactable.performed -= instance.OnInteractable;
             @Interactable.canceled -= instance.OnInteractable;
+            @UniqueActivity.started -= instance.OnUniqueActivity;
+            @UniqueActivity.performed -= instance.OnUniqueActivity;
+            @UniqueActivity.canceled -= instance.OnUniqueActivity;
+            @PlayerChange.started -= instance.OnPlayerChange;
+            @PlayerChange.performed -= instance.OnPlayerChange;
+            @PlayerChange.canceled -= instance.OnPlayerChange;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -332,5 +390,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnDraw(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
         void OnInteractable(InputAction.CallbackContext context);
+        void OnUniqueActivity(InputAction.CallbackContext context);
+        void OnPlayerChange(InputAction.CallbackContext context);
     }
 }

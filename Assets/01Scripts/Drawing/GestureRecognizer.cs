@@ -25,21 +25,12 @@ public class GestureRecognizer : MonoBehaviour
     private LineRenderer currentGestureLineRenderer;
 
     public LayerMask layerMask;
-    public Transform fishPrefab;
+    public Transform pigPrefab;
     public Transform chickPrefab;
     public GameObject cubePrefab;
 
-    private void Awake()
-    {
-
-    }
-
-
-
-    private void DrawingHandle()
-    {
-
-    }
+    public GameObject drawingHand;
+    public GameObject moveHand;
 
     private void Start()
     {
@@ -67,10 +58,10 @@ public class GestureRecognizer : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
 
-                
+                moveHand.SetActive(false);
+                drawingHand.SetActive(true);
 
                 ++strokeId;
-
                 Transform tmpGesture = Instantiate(gestureOnScreenPrefab, transform.position, transform.rotation) as Transform;
                 currentGestureLineRenderer = tmpGesture.GetComponent<LineRenderer>();
                 //Selection.activeGameObject = tmpGesture.gameObject;
@@ -79,7 +70,11 @@ public class GestureRecognizer : MonoBehaviour
 
                 vertexCount = 0;
             }
-
+            if(Input.GetMouseButtonUp(0))
+            {
+                drawingHand.SetActive(false);
+                moveHand.SetActive(true);
+            }
             if (Input.GetMouseButton(0))
             {
                 points.Add(new Point(Input.mousePosition.x, Input.mousePosition.y, strokeId));
@@ -98,6 +93,10 @@ public class GestureRecognizer : MonoBehaviour
             return;
         }
 
+        if (recognized)
+            ClearLine();
+
+        recognized = true;
 
         Gesture candidate = new Gesture(points.ToArray());
 
@@ -111,7 +110,14 @@ public class GestureRecognizer : MonoBehaviour
 
         Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
 
-        if (gestureResult.GestureClass == "FriendChiken")
+        if(gestureResult.GestureClass == "MetalPlate")
+        {
+            GameObject b = Instantiate(cubePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+        if (gestureResult.GestureClass == "FriendChick")
         {
             Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
@@ -119,17 +125,10 @@ public class GestureRecognizer : MonoBehaviour
             ClearLine();
         }
 
-        if (gestureResult.GestureClass == "FishHead")
+        if (gestureResult.GestureClass == "Pig")
         {
-            Transform b = Instantiate(fishPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            Transform b = Instantiate(pigPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-
-            ClearLine();
-        }
-        if(gestureResult.GestureClass == "IronPlate")
-        {
-            GameObject b = Instantiate(cubePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
-            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
 
             ClearLine();
         }

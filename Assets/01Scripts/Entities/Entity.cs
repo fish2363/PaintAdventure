@@ -19,7 +19,7 @@ public class Entity : ExtendedMono
         _components.Values.ToList().ForEach(compo => compo.Initialize(this));
     }
 
-    protected virtual void AddComponents()
+    public virtual void AddComponents()
     {
         GetComponentsInChildren<IEntityComponent>().ToList()
             .ForEach(compo => _components.Add(compo.GetType(), compo));

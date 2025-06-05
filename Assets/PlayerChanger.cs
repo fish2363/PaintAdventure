@@ -1,0 +1,38 @@
+using System;
+using UnityEngine;
+
+public class PlayerChanger : MonoBehaviour,IEntityComponent
+{
+    public PlayerType[] PlayerList;
+    public PlayerType currentPlayer { get; private set; }
+    private EntityAnimator _entityAnimator;
+
+    public void ChangePlayer(int count)
+    {
+        foreach(PlayerType p in PlayerList)
+            p.visual.SetActive(false);
+
+        currentPlayer = PlayerList[count];
+        currentPlayer.visual.SetActive(true);
+        _entityAnimator.animator = currentPlayer.visual.GetComponent<Animator>();
+    }
+
+    public void Initialize(Entity entity)
+    {
+        _entityAnimator = entity.GetCompo<EntityAnimator>();
+    }
+
+    private void Start()
+    {
+        ChangePlayer(0);
+    }
+}
+
+[Serializable]
+public struct PlayerType
+{
+    public float GroundCheckDistance;
+    public float WalkSpeed;
+    public GameObject visual;
+    public string playerName;
+}
