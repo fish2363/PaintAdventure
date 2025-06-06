@@ -8,7 +8,7 @@ public class Player : Entity
     private EntityStateMachine _stateMachine;
     public float detectionDistance;
     public LayerMask whatIsInteractableObj;
-    public Transform catchObj;
+    public CarryObject catchObj;
     private PlayerChanger _playerChanger;
 
     protected override void Awake()
@@ -41,4 +41,10 @@ public class Player : Entity
 
     public void ChangeState(string newStateName)
         => _stateMachine.ChangeState(newStateName);
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position,detectionDistance);
+    }
 }

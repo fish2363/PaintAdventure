@@ -10,13 +10,13 @@ public class PlayerPushIdleState : PlayerGroundState
     {
         base.Enter();
         _animator = _entity.GetCompo<EntityAnimator>();
-        _animator.animator.StopPlayback();
         _mover.StopImmediately();
     }
 
     public override void Update()
     {
         base.Update();
+        Debug.Log("PushIdleÀÓ");
         Vector2 movementKey = _player.InputReader.MovementKey;
         _mover.SetMovementDirection(movementKey);
         if (movementKey.magnitude > _inputThreshold)
@@ -27,7 +27,6 @@ public class PlayerPushIdleState : PlayerGroundState
 
     public override void Exit()
     {
-        _animator.animator.StartPlayback();
         base.Exit();
     }
 }

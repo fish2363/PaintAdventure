@@ -82,13 +82,13 @@ public class DrawManager : MonoBehaviour,IEntityComponent
         drawingRenderer.transform.GetChild(0).gameObject.SetActive(state);
         brushCamera.gameObject.SetActive(state);
 
-        //drawingRenderer.transform.DOLocalRotate(new Vector3(isDrawing ? 60 : 90, 180, 0), 0.5f, RotateMode.Fast).SetUpdate(true);
+        drawingRenderer.transform.DOLocalRotate(new Vector3(isDrawing ? 70 : 90, 180, 0), 0.5f, RotateMode.Fast).SetUpdate(true);
         //DOVirtual.Float(grainVolume.weight, effectAmount, 0.5f, (x) => grainVolume.weight = x).SetUpdate(true);
         //drawingRenderer.material.DOFloat(effectAmount, "SepiaAmount", 0.5f).SetUpdate(true);
 
         if (!state)
         {
-            FindObjectOfType<GestureRecognizer>()?.TryRecognize();
+            FindAnyObjectByType<GestureRecognizer>()?.TryRecognize();
         }
     }
 

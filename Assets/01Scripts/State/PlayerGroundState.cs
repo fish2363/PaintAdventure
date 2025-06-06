@@ -42,6 +42,7 @@ public class PlayerGroundState : EntityState
 
             foreach (Collider hit in target)
             {
+                if (!hit.TryGetComponent(out CarryObject carryObject)) return;
                 float distance = Vector3.Distance(_player.transform.position, hit.transform.position);
 
                 if (distance < minDistance)
@@ -51,7 +52,7 @@ public class PlayerGroundState : EntityState
                 }
             }
 
-            _player.catchObj = nearest;
+            _player.catchObj = nearest.GetComponent<CarryObject>();
             _player.ChangeState("INPUSH");
         }
     }

@@ -25,7 +25,7 @@ public class GestureRecognizer : MonoBehaviour
     private LineRenderer currentGestureLineRenderer;
 
     public LayerMask layerMask;
-    public Transform pigPrefab;
+    public Transform balloonPrefab;
     public Transform chickPrefab;
     public GameObject cubePrefab;
 
@@ -112,12 +112,13 @@ public class GestureRecognizer : MonoBehaviour
 
         if(gestureResult.GestureClass == "MetalPlate")
         {
+            Debug.Log("½Ã¹Ù");
             GameObject b = Instantiate(cubePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
 
             ClearLine();
         }
-        if (gestureResult.GestureClass == "FriendChick")
+        if (gestureResult.GestureClass == "ChickSummon")
         {
             Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
@@ -125,12 +126,22 @@ public class GestureRecognizer : MonoBehaviour
             ClearLine();
         }
 
-        if (gestureResult.GestureClass == "Pig")
+        if (gestureResult.GestureClass == "ObjBalloon")
         {
-            Transform b = Instantiate(pigPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
-            b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            Debug.Log("½¹");
+            RaycastHit hit = new RaycastHit();
 
-            ClearLine();
+            Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
+
+            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, layerMask))
+            {
+                Debug.Log(hit.collider.name);
+                Transform b = Instantiate(balloonPrefab, hit.collider.transform);
+                b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+                ClearLine();
+            }
+
         }
 
         //if (gestureResult.GestureClass == "mixandjam")
@@ -180,7 +191,7 @@ public class GestureRecognizer : MonoBehaviour
     {
         if (gestureLinesRenderer.Count < 1) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(gestureLinesRenderer[0].bounds.center, Camera.main.transform.forward);
+        Gizmos.DrawLine(Camera.main.transform.position, gestureLinesRenderer[0].bounds.center - Camera.main.transform.position);
         Gizmos.color = Color.white;
     }
 
