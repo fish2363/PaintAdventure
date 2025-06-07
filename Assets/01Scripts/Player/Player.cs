@@ -10,6 +10,7 @@ public class Player : Entity
     public LayerMask whatIsInteractableObj;
     public CarryObject catchObj;
     private PlayerChanger _playerChanger;
+    public Transform startPoint;
 
     protected override void Awake()
     {
@@ -38,7 +39,11 @@ public class Player : Entity
         _playerChanger.ChangePlayer(num);
         ChangeState("CHANGE");
     }
-
+    public void ReStartSet(string[] canGesture)
+    {
+        transform.position = startPoint.position;
+        GetCompo<DrawManager>().currentCanGestures = canGesture;
+    }
     public void ChangeState(string newStateName)
         => _stateMachine.ChangeState(newStateName);
 

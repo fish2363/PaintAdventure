@@ -25,10 +25,15 @@ public class GestureRecognizer : MonoBehaviour
     private LineRenderer currentGestureLineRenderer;
 
     public LayerMask layerMask;
+    [Header("그림 소환 프리펩")]
     public Transform balloonPrefab;
     public Transform chickPrefab;
-    public GameObject cubePrefab;
+    public GameObject ironPlatePrefab;
+    public GameObject carrotPrefab;
+    public GameObject applePrefab;
+    public GameObject pepperPrefab;
 
+    [Header("손")]
     public GameObject drawingHand;
     public GameObject moveHand;
 
@@ -36,14 +41,12 @@ public class GestureRecognizer : MonoBehaviour
     {
         drawArea = new Rect(0, 0, Screen.width, Screen.height);
 
-        TextAsset[] gesturesXml = Resources.LoadAll<TextAsset>("GestureSet/10-stylus-MEDIUM/");
-        foreach (TextAsset gestureXml in gesturesXml)
-            trainingSet.Add(GestureIO.ReadGestureFromXML(gestureXml.text));
+        
 
-        //Load user custom gestures
-        string[] filePaths = Directory.GetFiles(Application.persistentDataPath, "*.xml");
-        foreach (string filePath in filePaths)
-            trainingSet.Add(GestureIO.ReadGestureFromFile(filePath));
+        ////Load user custom gestures
+        //string[] filePaths = Directory.GetFiles(Application.persistentDataPath, "*.xml");
+        //foreach (string filePath in filePaths)
+        //    trainingSet.Add(GestureIO.ReadGestureFromFile(filePath));
     }
 
     private void Update()
@@ -85,7 +88,7 @@ public class GestureRecognizer : MonoBehaviour
         }
     }
 
-    public void TryRecognize()
+    public void TryRecognize(string[] gesturesName)
     {
         if (points.Count == 0)
         {
@@ -97,6 +100,19 @@ public class GestureRecognizer : MonoBehaviour
             ClearLine();
 
         recognized = true;
+        trainingSet.Clear();
+        TextAsset[] gesturesXml = Resources.LoadAll<TextAsset>("GestureSet/10-stylus-MEDIUM/");
+        foreach (TextAsset gestureXml in gesturesXml)
+        {
+            for(int i=0; i<gesturesName.Length;i++)
+            {
+                if (gestureXml.text.Contains(gesturesName[i]))
+                {
+                    Debug.Log(gestureXml.text);
+                    trainingSet.Add(GestureIO.ReadGestureFromXML(gestureXml.text));
+                }
+            }
+        }
 
         Gesture candidate = new Gesture(points.ToArray());
 
@@ -109,39 +125,14 @@ public class GestureRecognizer : MonoBehaviour
         }
 
         Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
-
-        if(gestureResult.GestureClass == "MetalPlate")
+        for(int i=0;i<gesturesName.Length;i++)
         {
-            Debug.Log("시바");
-            GameObject b = Instantiate(cubePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
-            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-
-            ClearLine();
-        }
-        if (gestureResult.GestureClass == "ChickSummon")
-        {
-            Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
-            b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-
-            ClearLine();
-        }
-
-        if (gestureResult.GestureClass == "ObjBalloon")
-        {
-            Debug.Log("슝");
-            RaycastHit hit = new RaycastHit();
-
-            Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
-
-            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, layerMask))
+            Debug.Log("여긴가");
+            if (gestureResult.GestureClass == gesturesName[i])
             {
-                Debug.Log(hit.collider.name);
-                Transform b = Instantiate(balloonPrefab, hit.collider.transform);
-                b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-
-                ClearLine();
+                Debug.Log("ㅅㅂ..?");
+                GestureActive(gesturesName[i]);
             }
-
         }
 
         //if (gestureResult.GestureClass == "mixandjam")
@@ -186,7 +177,66 @@ public class GestureRecognizer : MonoBehaviour
         //    }
     }
 
+    private void GestureActive(string gestureName)
+    {
+        if (gestureName == "Apple")
+        {
+            Debug.Log("시바");
+            GameObject b = Instantiate(applePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
 
+            ClearLine();
+        }
+        if (gestureName == "MetalPlate")
+        {
+            Debug.Log("시바");
+            GameObject b = Instantiate(ironPlatePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+        if (gestureName == "Carrot")
+        {
+            Debug.Log("시바");
+            GameObject b = Instantiate(carrotPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+        
+        if (gestureName == "Pepper")
+        {
+            Debug.Log("시바");
+            GameObject b = Instantiate(pepperPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+        if (gestureName == "ChickSummon")
+        {
+            Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+
+        if (gestureName == "ObjBalloon")
+        {
+            Debug.Log("슝");
+            RaycastHit hit = new RaycastHit();
+
+            Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
+
+            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, layerMask))
+            {
+                Debug.Log(hit.collider.name);
+                Transform b = Instantiate(balloonPrefab, hit.collider.transform);
+                b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+                ClearLine();
+            }
+        }
+    }
     private void OnDrawGizmos()
     {
         if (gestureLinesRenderer.Count < 1) return;

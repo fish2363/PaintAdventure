@@ -1,13 +1,16 @@
 using UnityEngine;
 
-public class CarryObject : ObjectUnit
+public class CarryObject : WeightObject
 {
-    public HandlePoint _handlePoint { get;private set; }
-    protected Rigidbody _RbCompo;
+    private Vector3 _velocity;
+    private float _moveSpeedMultiplier=1f;
+    private float _pushSpeed = 1f;
 
-    private void Awake()
+    public HandlePoint _handlePoint { get; private set; }
+
+    protected override void Awake()
     {
-        _RbCompo = GetComponent<Rigidbody>();
+        base.Awake();
         _handlePoint = GetComponentInChildren<HandlePoint>();
     }
 }

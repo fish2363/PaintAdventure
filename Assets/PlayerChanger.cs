@@ -7,7 +7,7 @@ public class PlayerChanger : MonoBehaviour,IEntityComponent
     public PlayerType[] PlayerList;
     public PlayerType currentPlayer { get; private set; }
     private EntityAnimator _entityAnimator;
-
+    private bool isStart;
     public void ChangePlayer(int count)
     {
         foreach(PlayerType p in PlayerList)
@@ -16,7 +16,9 @@ public class PlayerChanger : MonoBehaviour,IEntityComponent
         currentPlayer = PlayerList[count];
         currentPlayer.visual.SetActive(true);
         _entityAnimator.animator = currentPlayer.visual.GetComponent<Animator>();
+        if(isStart)
         _entityVFX.PlayVfx("PaintMonsterChange",Vector3.zero,Quaternion.identity);
+        isStart = true;
     }
 
     public void Initialize(Entity entity)

@@ -1,11 +1,17 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class PlayerInPushState : PlayerGroundState
+public class PlayerInPushState : EntityState
 {
     private bool isCompletelyMove;
+    protected Player _player;
+    protected readonly float _inputThreshold = 0.1f;
+    protected EntityMover _mover;
+
     public PlayerInPushState(Entity entity, int animationHash) : base(entity, animationHash)
     {
+        _player = entity as Player;
+        _mover = entity.GetCompo<EntityMover>();
     }
 
     public override void Enter()
@@ -15,7 +21,7 @@ public class PlayerInPushState : PlayerGroundState
 
         float minDistance = Mathf.Infinity;
         Transform nearest = null;
-        
+
         foreach (Transform hit in _player.catchObj._handlePoint.handlePoints)
         {
             float distance = Vector3.Distance(_player.transform.position, hit.transform.position);
@@ -26,14 +32,16 @@ public class PlayerInPushState : PlayerGroundState
                 nearest = hit.transform;
             }
         }
-        
-        _player.transform.DOMove(nearest.position,.5f).OnComplete(()=>
-        {
-            isCompletelyMove = true;
 
-            Vector3 lookDirection = (nearest.position - _player.transform.position).normalized;
-            _player.transform.rotation = Quaternion.LookRotation(lookDirection);
-        });
+        _player.transform.DOMove(nearest.position, .5f).OnComplete(() =>
+         {
+             isCompletelyMove = true;
+             Vector3 lookDirection = (_player.catchObj.transform.position - _player.transform.position).normalized;
+             _player.transform.rotation = Quaternion.LookRotation(lookDirection);
+
+             FixedJoint joint = _player.gameObject.AddComponent<FixedJoint>();
+             joint.connectedBody = _player.catchObj._RbCompo;
+         });
     }
     public override void Update()
     {

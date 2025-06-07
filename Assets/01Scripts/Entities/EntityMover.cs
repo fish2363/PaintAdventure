@@ -29,6 +29,8 @@ public class EntityMover : MonoBehaviour, IEntityComponent
     [SerializeField] private LayerMask whatIsGround;
 
     public bool CanManualMove { get; set; } = true;
+    public bool CanRotateBody { get; set; } = true;
+
 
 
     public void Initialize(Entity entity)
@@ -62,10 +64,8 @@ public class EntityMover : MonoBehaviour, IEntityComponent
     {
         var forward = _entity.transform.forward;
         forward.y = 0f;
-        if (forward.sqrMagnitude > 0.001f)
-            forward.Normalize();
 
-        _velocity = forward * movementInput.y;
+        _velocity = forward.normalized * movementInput.y;
     }
 
     private void FixedUpdate()
@@ -76,7 +76,7 @@ public class EntityMover : MonoBehaviour, IEntityComponent
             newVelocity.y = RbCompo.linearVelocity.y;
             RbCompo.linearVelocity = newVelocity;
 
-            if (_velocity.magnitude > 0)
+            if (_velocity.magnitude > 0 && CanRotateBody)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(_velocity);
                 Transform parent = _entity.transform;

@@ -1,21 +1,26 @@
 using UnityEngine;
 
-public class PlayerPushState : PlayerGroundState
+public class PlayerPushState : EntityState
 {
-    private EntityAnimator _animator;
-
+    protected Player _player;
+    protected readonly float _inputThreshold = 0.1f;
+    protected EntityMover _mover;
     public PlayerPushState(Entity entity, int animationHash) : base(entity, animationHash)
     {
+        _player = entity as Player;
+        _mover = entity.GetCompo<EntityMover>();
+        Debug.Assert(_player != null, $"Player state using only in player");
     }
 
     public override void Enter()
     {
         base.Enter();
-        _animator = _entity.GetCompo<EntityAnimator>();
+        _mover.CanRotateBody = false;
     }
 
     public override void Exit()
     {
+        _mover.CanRotateBody = true;
         base.Exit();
     }
 

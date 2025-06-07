@@ -1,11 +1,15 @@
 using UnityEngine;
 
-public class PlayerChangeState : PlayerGroundState
+public class PlayerChangeState : EntityState
 {
     private PlayerChanger _playerChanger;
+    private EntityMover _mover;
+    private Player _player;
     public PlayerChangeState(Entity entity, int animationHash) : base(entity, animationHash)
     {
         _playerChanger = entity.GetCompo<PlayerChanger>();
+        _mover = entity.GetCompo<EntityMover>();
+        _player = entity as Player;
     }
 
     public override void Enter()

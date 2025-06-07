@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PushBox : WeightObject
+public class PushBox : CarryObject
 {
     
 }

@@ -8,14 +8,20 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     public Transform brush;
     public Animator brushAnimator;
     public Camera brushCamera;
+    public Camera frontObjCamera;
 
-    public Renderer drawingRenderer;
+    public GameObject drawingRenderer;
     public CinemachineCamera freeLook;
     public CinemachineCamera drawView;
 
     private Player _player;
 
     public static bool isDrawing;
+
+    private bool isOnDraw;
+    private EntityMMFeedback feedback;
+    public string[] currentCanGestures;
+    public StageSystem stageSystem;
 
     public void Initialize(Entity entity)
     {
@@ -25,6 +31,7 @@ public class DrawManager : MonoBehaviour,IEntityComponent
             brushCamera.gameObject.SetActive(false);
 
         _player = entity as Player;
+        feedback = entity.GetCompo<EntityMMFeedback>();
         _player.InputReader.OnDrawingEvent += HandleDrawBtn;
     }
     private void OnDestroy()
@@ -33,6 +40,8 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     }
     private void HandleDrawBtn(bool isHoldPencil)
     {
+        if (isOnDraw || currentCanGestures.Length < 1) return;
+        feedback.PlayFeedback("GetOutDraw");
         SetDrawingMode(isHoldPencil);
     }
 
@@ -44,12 +53,12 @@ public class DrawManager : MonoBehaviour,IEntityComponent
 
     private void DrawingAnimation()
     {
-        if (brushAnimator != null && brushAnimator.gameObject.activeSelf)
-        {
-            brushAnimator.SetFloat("X", Mathf.Lerp(brushAnimator.GetFloat("X"), Input.GetAxis("Mouse X") * 1, .09f));
-            brushAnimator.SetFloat("Y", Mathf.Lerp(brushAnimator.GetFloat("Y"), Input.GetAxis("Mouse Y") * 1, .09f));
-            brushAnimator.SetBool("isDrawing", Input.GetMouseButton(0));
-        }
+        //if (brushAnimator != null && brushAnimator.gameObject.activeSelf)
+        //{
+        //    brushAnimator.SetFloat("X", Mathf.Lerp(brushAnimator.GetFloat("X"), Input.GetAxis("Mouse X") * 1, .09f));
+        //    brushAnimator.SetFloat("Y", Mathf.Lerp(brushAnimator.GetFloat("Y"), Input.GetAxis("Mouse Y") * 1, .09f));
+        //    brushAnimator.SetBool("isDrawing", Input.GetMouseButton(0));
+        //}
     }
 
     private void BrushMovement()
@@ -73,36 +82,44 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     {
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
         isDrawing = state;
-        Time.timeScale = isDrawing ? 0 : 1;
 
         freeLook.enabled = !state;
         drawView.enabled = state;
 
         StartCoroutine(ScaleWait(state));
-        drawingRenderer.transform.GetChild(0).gameObject.SetActive(state);
+        drawingRenderer.SetActive(state);
         brushCamera.gameObject.SetActive(state);
+        frontObjCamera.gameObject.SetActive(!state);
 
-        drawingRenderer.transform.DOLocalRotate(new Vector3(isDrawing ? 70 : 90, 180, 0), 0.5f, RotateMode.Fast).SetUpdate(true);
+        //drawingRenderer.transform.DOLocalRotate(new Vector3(isDrawing ? 70 : 90, 180, 0), 0.5f, RotateMode.Fast).SetUpdate(true);
         //DOVirtual.Float(grainVolume.weight, effectAmount, 0.5f, (x) => grainVolume.weight = x).SetUpdate(true);
         //drawingRenderer.material.DOFloat(effectAmount, "SepiaAmount", 0.5f).SetUpdate(true);
 
         if (!state)
         {
-            FindAnyObjectByType<GestureRecognizer>()?.TryRecognize();
+            FindAnyObjectByType<GestureRecognizer>()?.TryRecognize(currentCanGestures);
         }
     }
-
+    public void GoalScale()
+    {
+        isOnDraw = !isOnDraw;
+        freeLook.enabled = !isOnDraw;
+        drawView.enabled = isOnDraw;
+        drawingRenderer.SetActive(isOnDraw);
+        StartCoroutine(ScaleWait(isOnDraw));
+        if (stageSystem.IsClear && isOnDraw) stageSystem.StageClear();
+    }
     private IEnumerator ScaleWait(bool isEnabled)
     {
         drawingRenderer.transform.DOKill();
-        drawingRenderer.enabled = isEnabled;
+        drawingRenderer.SetActive(isEnabled);
         if (isEnabled)
         {
-            yield return drawingRenderer.transform.DOScale(new Vector3(0.06f, 0.04045355f, 0.034f), 0.5f).SetUpdate(true)
+            yield return drawingRenderer.transform.DOScale(new Vector3(0.1050295f, 0.05834971f, 0.05834971f), 0.5f).SetUpdate(true)
                 .WaitForCompletion();
         }
         else
-            yield return drawingRenderer.transform.DOScale(new Vector3(0.07281639f, 0.04045355f, 0.04045355f), 0.5f);
+            yield return drawingRenderer.transform.DOScale(new Vector3(0.1466158f, 0.08145322f, 0.08145322f), 0.5f);
     }
 
 }
