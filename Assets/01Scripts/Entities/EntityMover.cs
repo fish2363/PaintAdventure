@@ -31,11 +31,12 @@ public class EntityMover : MonoBehaviour, IEntityComponent
     public bool CanManualMove { get; set; } = true;
     public bool CanRotateBody { get; set; } = true;
 
-
+    private Player _player;
 
     public void Initialize(Entity entity)
     {
         _entity = entity;
+        _player = entity as Player;
         RbCompo = entity.GetComponent<Rigidbody>();
         Debug.Assert(RbCompo != null, "이거 없음");
         _moveSpeedMultiplier = 1f;
@@ -76,7 +77,7 @@ public class EntityMover : MonoBehaviour, IEntityComponent
             newVelocity.y = RbCompo.linearVelocity.y;
             RbCompo.linearVelocity = newVelocity;
 
-            if (_velocity.magnitude > 0 && CanRotateBody)
+            if (_velocity.magnitude > 0 && CanRotateBody && CanManualMove)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(_velocity);
                 Transform parent = _entity.transform;

@@ -17,6 +17,10 @@ public class PlayerInPushState : EntityState
     public override void Enter()
     {
         base.Enter();
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = true;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
+
         _mover.CanManualMove = false;
 
         float minDistance = Mathf.Infinity;

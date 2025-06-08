@@ -17,6 +17,8 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     public event Action OnCancelRunKeyEvent;
     public event Action OnChangeKeyEvent;
 
+    public event Action OnTipKeyEvent;
+
     private void OnEnable()
     {
         if (inputs == null)
@@ -72,5 +74,11 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     {
         if (context.performed)
             OnChangeKeyEvent?.Invoke();
+    }
+
+    public void OnTip(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnTipKeyEvent?.Invoke();
     }
 }

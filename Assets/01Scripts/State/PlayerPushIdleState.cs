@@ -30,6 +30,11 @@ public class PlayerPushIdleState : EntityState
     private void HandleCancelKeyPress()
     {
         Object.Destroy(_player.GetComponent<FixedJoint>());
+
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = false;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
+
         _player.ChangeState("IDLE");
     }
     public override void Exit()

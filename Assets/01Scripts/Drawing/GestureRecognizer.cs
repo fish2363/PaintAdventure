@@ -25,6 +25,7 @@ public class GestureRecognizer : MonoBehaviour
     private LineRenderer currentGestureLineRenderer;
 
     public LayerMask layerMask;
+    public LayerMask whatIsDrawArea;
     [Header("그림 소환 프리펩")]
     public Transform balloonPrefab;
     public Transform chickPrefab;
@@ -32,6 +33,9 @@ public class GestureRecognizer : MonoBehaviour
     public GameObject carrotPrefab;
     public GameObject applePrefab;
     public GameObject pepperPrefab;
+    public GameObject bridgeObject;
+    public GameObject flowerObject;
+    public GameObject treeObject;
 
     [Header("손")]
     public GameObject drawingHand;
@@ -130,7 +134,6 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("여긴가");
             if (gestureResult.GestureClass == gesturesName[i])
             {
-                Debug.Log("ㅅㅂ..?");
                 GestureActive(gesturesName[i]);
             }
         }
@@ -187,6 +190,26 @@ public class GestureRecognizer : MonoBehaviour
 
             ClearLine();
         }
+        if (gestureName == "Flower")
+        {
+            Debug.Log("시바");
+            GameObject b = Instantiate(flowerObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+        if (gestureName == "Tree")
+        {
+            Debug.Log("시바");
+            GameObject b = Instantiate(treeObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+
+            ClearLine();
+        }
+        if (gestureName == "Animal")
+        {
+            
+        }
         if (gestureName == "MetalPlate")
         {
             Debug.Log("시바");
@@ -210,6 +233,22 @@ public class GestureRecognizer : MonoBehaviour
             GameObject b = Instantiate(pepperPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
 
+            ClearLine();
+        }
+        if (gestureName == "Bridge")
+        {
+            RaycastHit hit = new RaycastHit();
+            Debug.Log("들어옴");
+            Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
+
+            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity,whatIsDrawArea))
+            {
+                Debug.Log("감지됨");
+                if (hit.collider.CompareTag("DrawArea"))
+                {
+                    bridgeObject.SetActive(true);
+                }
+            }
             ClearLine();
         }
         if (gestureName == "ChickSummon")

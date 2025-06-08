@@ -10,6 +10,9 @@ public class PlayerRunState : PlayerGroundState
     {
         base.Enter();
         _mover.SetSprint(true);
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = true;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
         _player.InputReader.OnCancelRunKeyEvent += CancelRunHandle;
     }
 
@@ -33,6 +36,10 @@ public class PlayerRunState : PlayerGroundState
     public override void Exit()
     {
         base.Exit();
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = false;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
+
         _player.InputReader.OnCancelRunKeyEvent -= CancelRunHandle;
         _mover.SetSprint(false);
     }

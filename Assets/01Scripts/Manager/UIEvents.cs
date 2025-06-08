@@ -6,17 +6,22 @@ public static class UIEvents
 {
     public static StartTipDialogueEvent StartTipDialogueEvent = new();
     public static StageNameEvent StageNameEvent = new();
+    public static SkillUIEvent SkillUIEvent = new();
 }
 
 public class StartTipDialogueEvent : GameEvent
 {
-    public string[] tipText;
-    public MMF_Player feedback;
-    public Sprite characterIllustration;
+    public string tipText;
 }
 
 public class StageNameEvent : GameEvent
 {
     public string Text;
     public float duration;
+}
+
+public class SkillUIEvent : GameEvent
+{
+    public PlayerType type;
+    public bool isHide;
 }

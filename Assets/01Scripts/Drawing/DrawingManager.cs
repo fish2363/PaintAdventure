@@ -8,7 +8,6 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     public Transform brush;
     public Animator brushAnimator;
     public Camera brushCamera;
-    public Camera frontObjCamera;
 
     public GameObject drawingRenderer;
     public CinemachineCamera freeLook;
@@ -41,6 +40,11 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     private void HandleDrawBtn(bool isHoldPencil)
     {
         if (isOnDraw || currentCanGestures.Length < 1) return;
+
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = isHoldPencil;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
+
         feedback.PlayFeedback("GetOutDraw");
         SetDrawingMode(isHoldPencil);
     }
@@ -80,6 +84,7 @@ public class DrawManager : MonoBehaviour,IEntityComponent
 
     public void SetDrawingMode(bool state)
     {
+        FindAnyObjectByType<UIManager>().KakaoTipOut();
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
         isDrawing = state;
 
@@ -89,7 +94,6 @@ public class DrawManager : MonoBehaviour,IEntityComponent
         StartCoroutine(ScaleWait(state));
         drawingRenderer.SetActive(state);
         brushCamera.gameObject.SetActive(state);
-        frontObjCamera.gameObject.SetActive(!state);
 
         //drawingRenderer.transform.DOLocalRotate(new Vector3(isDrawing ? 70 : 90, 180, 0), 0.5f, RotateMode.Fast).SetUpdate(true);
         //DOVirtual.Float(grainVolume.weight, effectAmount, 0.5f, (x) => grainVolume.weight = x).SetUpdate(true);
@@ -102,11 +106,13 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     }
     public void GoalScale()
     {
+        FindAnyObjectByType<UIManager>().KakaoTipOut();
         isOnDraw = !isOnDraw;
         freeLook.enabled = !isOnDraw;
         drawView.enabled = isOnDraw;
         drawingRenderer.SetActive(isOnDraw);
         StartCoroutine(ScaleWait(isOnDraw));
+
         if (stageSystem.IsClear && isOnDraw) stageSystem.StageClear();
     }
     private IEnumerator ScaleWait(bool isEnabled)

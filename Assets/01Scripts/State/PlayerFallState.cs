@@ -12,6 +12,10 @@ public class PlayerFallState : PlayerAirState
         base.Update();
         if (_mover.IsGroundDetected())
         {
+            SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+            skillUIEvent.isHide = false;
+            _player.UIChannel.RaiseEvent(skillUIEvent);
+
             _player.ChangeState("ENDFALL");
         }
     }

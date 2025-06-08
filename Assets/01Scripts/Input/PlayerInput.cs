@@ -89,6 +89,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tip"",
+                    ""type"": ""Button"",
+                    ""id"": ""f2a3126d-7d34-4dda-871f-5f93615961e6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +221,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""PlayerChange"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ed907d88-b1c5-43a7-b9f9-b41bf5cd82d9"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -227,6 +247,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Interactable = m_Player.FindAction("Interactable", throwIfNotFound: true);
         m_Player_UniqueActivity = m_Player.FindAction("UniqueActivity", throwIfNotFound: true);
         m_Player_PlayerChange = m_Player.FindAction("PlayerChange", throwIfNotFound: true);
+        m_Player_Tip = m_Player.FindAction("Tip", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -300,6 +321,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interactable;
     private readonly InputAction m_Player_UniqueActivity;
     private readonly InputAction m_Player_PlayerChange;
+    private readonly InputAction m_Player_Tip;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -311,6 +333,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Interactable => m_Wrapper.m_Player_Interactable;
         public InputAction @UniqueActivity => m_Wrapper.m_Player_UniqueActivity;
         public InputAction @PlayerChange => m_Wrapper.m_Player_PlayerChange;
+        public InputAction @Tip => m_Wrapper.m_Player_Tip;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -341,6 +364,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @PlayerChange.started += instance.OnPlayerChange;
             @PlayerChange.performed += instance.OnPlayerChange;
             @PlayerChange.canceled += instance.OnPlayerChange;
+            @Tip.started += instance.OnTip;
+            @Tip.performed += instance.OnTip;
+            @Tip.canceled += instance.OnTip;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -366,6 +392,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @PlayerChange.started -= instance.OnPlayerChange;
             @PlayerChange.performed -= instance.OnPlayerChange;
             @PlayerChange.canceled -= instance.OnPlayerChange;
+            @Tip.started -= instance.OnTip;
+            @Tip.performed -= instance.OnTip;
+            @Tip.canceled -= instance.OnTip;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -392,5 +421,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnInteractable(InputAction.CallbackContext context);
         void OnUniqueActivity(InputAction.CallbackContext context);
         void OnPlayerChange(InputAction.CallbackContext context);
+        void OnTip(InputAction.CallbackContext context);
     }
 }

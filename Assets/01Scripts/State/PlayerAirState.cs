@@ -22,7 +22,7 @@ public class PlayerAirState : EntityState
     {
         base.Update();
         Vector2 movementKey = _player.InputReader.MovementKey;
-        if (Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0)
+        if ((Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0) && _mover.CanManualMove)
             _mover.SetMovementDirection(movementKey);
     }
 

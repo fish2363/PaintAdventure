@@ -10,6 +10,11 @@ public class PlayerJumpState : PlayerAirState
     {
         base.Enter();
         _mover.Jump();
+
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = true;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
+
         _mover.OnVelocity.AddListener(HandleVelocityChange);
     }
 

@@ -16,7 +16,18 @@ public class StageSystem : ExtendedMono
 
     [SerializeField]
     private GameEventChannelSO uiChannel;
-    
+
+    private void Start()
+    {
+        StageNameEvent stageNameEvent = UIEvents.StageNameEvent;
+        stageNameEvent.Text = stageSet[currentStage].stageName;
+        stageNameEvent.duration = 3f;
+        uiChannel.RaiseEvent(stageNameEvent);
+
+
+        FindAnyObjectByType<Player>().ReStartSet(false, stageSet[currentStage].drawPictureName);
+    }
+
     [ContextMenu("StageClear")]
     public void StageClear()
     {
@@ -40,7 +51,7 @@ public class StageSystem : ExtendedMono
         FindAnyObjectByType<Player>().GetCompo<EntityMover>().RbCompo.isKinematic = false;
         stageSet[currentStage].viewPicture.material = stageCamera;
         _director.gameObject.SetActive(false);
-        FindAnyObjectByType<Player>().ReStartSet(stageSet[currentStage].drawPictureName);
+        FindAnyObjectByType<Player>().ReStartSet(false,stageSet[currentStage].drawPictureName);
     }
 }
 

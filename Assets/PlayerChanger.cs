@@ -8,6 +8,8 @@ public class PlayerChanger : MonoBehaviour,IEntityComponent
     public PlayerType currentPlayer { get; private set; }
     private EntityAnimator _entityAnimator;
     private bool isStart;
+    private Player _player;
+
     public void ChangePlayer(int count)
     {
         foreach(PlayerType p in PlayerList)
@@ -19,12 +21,17 @@ public class PlayerChanger : MonoBehaviour,IEntityComponent
         if(isStart)
         _entityVFX.PlayVfx("PaintMonsterChange",Vector3.zero,Quaternion.identity);
         isStart = true;
+
+        SkillUIEvent skillUIChangeEvent = UIEvents.SkillUIEvent;
+        skillUIChangeEvent.type = currentPlayer;
+        _player.UIChannel.RaiseEvent(skillUIChangeEvent);
     }
 
     public void Initialize(Entity entity)
     {
         _entityAnimator = entity.GetCompo<EntityAnimator>();
         _entityVFX = entity.GetCompo<EntityVFX>();
+        _player = entity as Player;
     }
 
     private void Start()
