@@ -32,19 +32,36 @@ public class UIManager : MonoBehaviour
     private Transform _uiUpPos;
 
     private bool isOnUI;
+    [Header("튜토리얼 UI")]
+    private bool isWaitTargetKeyPress;
+    private KeyCode skipKey;
+    [SerializeField]
+    private TextMeshProUGUI tutorialText;
 
     private void Awake()
     {
         uiChannel.AddListener<StartTipDialogueEvent>(TipDialogueStartHandle);
         uiChannel.AddListener<StageNameEvent>(StageNameHandle);
         uiChannel.AddListener<SkillUIEvent>(SkillUIChangeHandle);
+        uiChannel.AddListener<TutorialEvent>(TutorialEventHandle);
         InputReader.OnTipKeyEvent += TipUI;
     }
-    private void Start()
+
+    private void TutorialEventHandle(TutorialEvent obj)
     {
-        StartTipDialogueEvent startTipDialogueEvent = new();
-        startTipDialogueEvent.tipText = "히히히히";
-        TipDialogueStartHandle(startTipDialogueEvent);
+        FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = false;
+        skipKey = obj.skipKey;
+        tutorialText.text = obj.tutorialText;
+        isWaitTargetKeyPress = true;
+    }
+
+
+    private void Update()
+    {
+        if(isWaitTargetKeyPress && Input.GetKeyDown(skipKey))
+        {
+            FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = true;
+        }
     }
     private void TipUI()
     {
@@ -60,6 +77,8 @@ public class UIManager : MonoBehaviour
         uiChannel.RemoveListener<StartTipDialogueEvent>(TipDialogueStartHandle);
         uiChannel.RemoveListener<StageNameEvent>(StageNameHandle);
         uiChannel.RemoveListener<SkillUIEvent>(SkillUIChangeHandle);
+        uiChannel.RemoveListener<TutorialEvent>(TutorialEventHandle);
+
         InputReader.OnTipKeyEvent -= TipUI;
     }
 

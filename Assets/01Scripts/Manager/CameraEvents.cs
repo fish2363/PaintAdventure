@@ -11,7 +11,6 @@ public class SwapCameraEvent : GameEvent
 {
     public CinemachineCamera leftCamera;
     public CinemachineCamera rightCamera;
-    public Vector2 moveDirection;
 }
 
 public class CameraShake : GameEvent

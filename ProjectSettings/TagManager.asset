@@ -7,6 +7,9 @@ TagManager:
   - Missile
   - Dead
   - DrawArea
+  - Flower
+  - Tree
+  - CanPush
   layers:
   - Default
   - TransparentFX
@@ -22,8 +25,8 @@ TagManager:
   - FrontObj
   - Dead
   - DrawArea
-  - 
-  - 
+  - Player
+  - ObjText
   - 
   - 
   - 

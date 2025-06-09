@@ -21,6 +21,8 @@ public class PlayerJumpState : PlayerAirState
     public override void Update()
     {
         base.Update();
+        if (_mover.IsGroundDetected())
+            _player.ChangeState("IDLE");
     }
 
     public override void Exit()

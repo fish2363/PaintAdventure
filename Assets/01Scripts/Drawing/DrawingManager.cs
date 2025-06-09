@@ -18,7 +18,6 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     public static bool isDrawing;
 
     private bool isOnDraw;
-    private EntityMMFeedback feedback;
     public string[] currentCanGestures;
     public StageSystem stageSystem;
 
@@ -30,7 +29,6 @@ public class DrawManager : MonoBehaviour,IEntityComponent
             brushCamera.gameObject.SetActive(false);
 
         _player = entity as Player;
-        feedback = entity.GetCompo<EntityMMFeedback>();
         _player.InputReader.OnDrawingEvent += HandleDrawBtn;
     }
     private void OnDestroy()
@@ -40,12 +38,6 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     private void HandleDrawBtn(bool isHoldPencil)
     {
         if (isOnDraw || currentCanGestures.Length < 1) return;
-
-        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
-        skillUIEvent.isHide = isHoldPencil;
-        _player.UIChannel.RaiseEvent(skillUIEvent);
-
-        feedback.PlayFeedback("GetOutDraw");
         SetDrawingMode(isHoldPencil);
     }
 
@@ -86,8 +78,12 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     {
         FindAnyObjectByType<UIManager>().KakaoTipOut();
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
-        isDrawing = state;
 
+        isDrawing = state;
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = state;
+
+        _player.UIChannel.RaiseEvent(skillUIEvent);
         freeLook.enabled = !state;
         drawView.enabled = state;
 

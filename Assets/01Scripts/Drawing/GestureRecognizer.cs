@@ -3,6 +3,7 @@ using PDollarGestureRecognizer;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -23,23 +24,26 @@ public class GestureRecognizer : MonoBehaviour
 
     private List<LineRenderer> gestureLinesRenderer = new List<LineRenderer>();
     private LineRenderer currentGestureLineRenderer;
-
+    
     public LayerMask layerMask;
     public LayerMask whatIsDrawArea;
     [Header("그림 소환 프리펩")]
-    public Transform balloonPrefab;
-    public Transform chickPrefab;
-    public GameObject ironPlatePrefab;
-    public GameObject carrotPrefab;
-    public GameObject applePrefab;
-    public GameObject pepperPrefab;
-    public GameObject bridgeObject;
-    public GameObject flowerObject;
-    public GameObject treeObject;
+    [SerializeField] private Transform balloonPrefab;
+    [SerializeField] private Transform chickPrefab;
+    [SerializeField] private GameObject ironPlatePrefab;
+    [SerializeField] private GameObject carrotPrefab;
+    [SerializeField] private GameObject applePrefab;
+    [SerializeField] private GameObject pepperPrefab;
+    [SerializeField] private GameObject bridgeObject;
+    [SerializeField] private GameObject flowerObject;
+    [SerializeField] private GameObject treeObject;
 
     [Header("손")]
-    public GameObject drawingHand;
-    public GameObject moveHand;
+    [SerializeField] private GameObject drawingHand;
+    [SerializeField] private GameObject moveHand;
+
+    [Header("연출")]
+    [SerializeField] private GameObject floatText;
 
     private void Start()
     {
@@ -122,19 +126,18 @@ public class GestureRecognizer : MonoBehaviour
 
         Result gestureResult = PointCloudRecognizer.Classify(candidate, trainingSet.ToArray());
 
-        if (gestureResult.Score < .75f)
+        if (gestureResult.Score < .8f)
         {
             ClearLine();
             return;
         }
 
-        Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
         for(int i=0;i<gesturesName.Length;i++)
         {
             Debug.Log("여긴가");
             if (gestureResult.GestureClass == gesturesName[i])
             {
-                GestureActive(gesturesName[i]);
+                GestureActive(gesturesName[i],gestureResult.Score*100);
             }
         }
 
@@ -180,14 +183,14 @@ public class GestureRecognizer : MonoBehaviour
         //    }
     }
 
-    private void GestureActive(string gestureName)
+    private void GestureActive(string gestureName,float percent)
     {
         if (gestureName == "Apple")
         {
             Debug.Log("시바");
             GameObject b = Instantiate(applePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-
+            InitFloatText(b.transform,percent);
             ClearLine();
         }
         if (gestureName == "Flower")
@@ -195,6 +198,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(flowerObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(b.transform, percent);
 
             ClearLine();
         }
@@ -203,6 +207,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(treeObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(b.transform, percent);
 
             ClearLine();
         }
@@ -215,6 +220,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(ironPlatePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(b.transform, percent);
 
             ClearLine();
         }
@@ -223,6 +229,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(carrotPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(b.transform, percent);
 
             ClearLine();
         }
@@ -232,6 +239,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(pepperPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(b.transform, percent);
 
             ClearLine();
         }
@@ -247,6 +255,8 @@ public class GestureRecognizer : MonoBehaviour
                 if (hit.collider.CompareTag("DrawArea"))
                 {
                     bridgeObject.SetActive(true);
+                    InitFloatText(bridgeObject.transform, percent);
+
                 }
             }
             ClearLine();
@@ -255,6 +265,7 @@ public class GestureRecognizer : MonoBehaviour
         {
             Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(b.transform, percent);
 
             ClearLine();
         }
@@ -271,10 +282,17 @@ public class GestureRecognizer : MonoBehaviour
                 Debug.Log(hit.collider.name);
                 Transform b = Instantiate(balloonPrefab, hit.collider.transform);
                 b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+                InitFloatText(b.transform, percent);
 
                 ClearLine();
             }
         }
+        Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
+    }
+
+    public void InitFloatText(Transform spawnPos,float percent)
+    {
+        Instantiate(floatText,new Vector3(spawnPos.position.x,spawnPos.position.y,spawnPos.position.z - 1f),Quaternion.identity).GetComponent<TextMeshPro>().text = $"{percent.ToString().Substring(0,2)}% 일치";
     }
     private void OnDrawGizmos()
     {

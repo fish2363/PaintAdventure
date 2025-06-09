@@ -2,5 +2,12 @@ using UnityEngine;
 
 public class PushBox : CarryObject
 {
-    
+    [SerializeField] private Transform spanwPoint;
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Dead")
+        {
+            transform.position = spanwPoint.position;
+        }
+    }
 }

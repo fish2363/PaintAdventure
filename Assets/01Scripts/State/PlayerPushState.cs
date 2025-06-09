@@ -28,6 +28,18 @@ public class PlayerPushState : EntityState
     {
         base.Update();
         Debug.Log("Push¿”");
+        if (_mover.IsGroundDetected() == false)
+        {
+            Object.Destroy(_player.GetComponent<FixedJoint>());
+            _player.catchObj._RbCompo.mass = 1000f;
+
+            SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+            skillUIEvent.isHide = false;
+            _player.UIChannel.RaiseEvent(skillUIEvent);
+
+            _player.ChangeState("IDLE");
+        }
+
         Vector2 movementKey = _player.InputReader.MovementKey;
 
         if (Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0 && _mover.CanManualMove)

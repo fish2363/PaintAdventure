@@ -17,11 +17,9 @@ public class CameraTrigger : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            Vector3 exitDirection = (other.transform.position - transform.position).normalized;
             SwapCameraEvent swapEvt = CameraEvents.SwapCameraEvent;
             swapEvt.leftCamera = leftCamera;
             swapEvt.rightCamera = rightCamera;
-            swapEvt.moveDirection = exitDirection;
             OnCameraTriggerEvent?.Invoke();
 
             cameraChannel.RaiseEvent(swapEvt);

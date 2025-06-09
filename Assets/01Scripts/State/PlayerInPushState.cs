@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class PlayerInPushState : EntityState
@@ -17,6 +18,8 @@ public class PlayerInPushState : EntityState
     public override void Enter()
     {
         base.Enter();
+        _player.GetCompo<ObjectUIComponent>().GetObjUI("PressW/S(Push)").GetComponent<TextMeshPro>().DOFade(1f,0.2f);
+
         SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
         skillUIEvent.isHide = true;
         _player.UIChannel.RaiseEvent(skillUIEvent);
@@ -45,6 +48,7 @@ public class PlayerInPushState : EntityState
 
              FixedJoint joint = _player.gameObject.AddComponent<FixedJoint>();
              joint.connectedBody = _player.catchObj._RbCompo;
+             _player.catchObj._RbCompo.mass = 1f;
          });
     }
     public override void Update()

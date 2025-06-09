@@ -65,6 +65,9 @@ public class Player : Entity
     {
         if(collision.gameObject.tag == "Dead")
         {
+            StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
+            startTipDialogueEvent.tipText = "아이들이 볼 수도\n있으니까 죽는 모습은\n그리면 안돼요 ㅡㅡ";
+            UIChannel.RaiseEvent(startTipDialogueEvent);
             ReStartSet(true);
         }
     }

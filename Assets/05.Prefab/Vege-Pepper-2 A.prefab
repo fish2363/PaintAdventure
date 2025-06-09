@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1307890873909498452}
   - component: {fileID: 1484908777877227635}
   - component: {fileID: 2541471758788112983}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: layer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 7248774491231024691}
   - component: {fileID: 2761689806531730056}
   - component: {fileID: 5057290146021440463}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Vege-Pepper-2 A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,7 +194,7 @@ GameObject:
   - component: {fileID: 6381349619352953831}
   - component: {fileID: 6203273019928275130}
   - component: {fileID: 6729757596300522224}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: layer 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
