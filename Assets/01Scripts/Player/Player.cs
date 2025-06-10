@@ -58,7 +58,7 @@ public class Player : Entity
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position,detectionDistance);
+        Gizmos.DrawWireSphere(transform.position,detectionDistance);
     }
 
     private void OnCollisionEnter(Collision collision)

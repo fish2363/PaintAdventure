@@ -13,6 +13,7 @@ public static class UIEvents
 public class StartTipDialogueEvent : GameEvent
 {
     public string tipText;
+    public string tipTrigger;
 }
 public class TutorialEvent : GameEvent
 {

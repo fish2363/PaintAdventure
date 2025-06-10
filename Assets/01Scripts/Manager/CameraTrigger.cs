@@ -10,6 +10,7 @@ public class CameraTrigger : MonoBehaviour
     [SerializeField] private GameEventChannelSO cameraChannel;
 
     public UnityEvent OnCameraTriggerEvent;
+    public bool isOneTime;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,6 +24,7 @@ public class CameraTrigger : MonoBehaviour
             OnCameraTriggerEvent?.Invoke();
 
             cameraChannel.RaiseEvent(swapEvt);
+            if (isOneTime) Destroy(gameObject);
         }
     }
 }

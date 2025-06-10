@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     [field : SerializeField] private CanvasGroup chatButtonGroup;
     [field : SerializeField] private TextMeshProUGUI tipText;
     [field : SerializeField] private Image tipNewText;
+    private string tipTextTrigger;
 
     [Header("스킬UI")]
     public GameObject runSkill;
@@ -49,10 +50,20 @@ public class UIManager : MonoBehaviour
 
     private void TutorialEventHandle(TutorialEvent obj)
     {
-        FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = false;
-        skipKey = obj.skipKey;
-        tutorialText.text = obj.tutorialText;
-        isWaitTargetKeyPress = true;
+        tutorialText.DOFade(1f, 0.2f).OnComplete(() =>
+        {
+            Debug.Log("와 ㅈ됏논");
+            tutorialText.DOFade(1f, 0.2f);
+            FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = false;
+            skipKey = obj.skipKey;
+            tutorialText.text =obj.tutorialText;
+            isWaitTargetKeyPress = true;
+
+            SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+            skillUIEvent.isHide = true;
+            SkillUIChangeHandle(skillUIEvent);
+        }
+        );
     }
 
 
@@ -60,7 +71,14 @@ public class UIManager : MonoBehaviour
     {
         if(isWaitTargetKeyPress && Input.GetKeyDown(skipKey))
         {
+            tutorialText.DOFade(0f,0.2f).OnComplete(()=> tutorialText.text ="");
             FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = true;
+            isWaitTargetKeyPress = false;
+            skipKey = KeyCode.None;
+
+            SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+            skillUIEvent.isHide = false;
+            SkillUIChangeHandle(skillUIEvent);
         }
     }
     private void TipUI()
@@ -70,6 +88,12 @@ public class UIManager : MonoBehaviour
         else
             KakaoTipIn();
         isOnUI = !isOnUI;
+    }
+
+    public void KakaoUIFade()
+    {
+        isOnUI = false;
+        KakaoTipOut();
     }
 
     private void OnDestroy()
@@ -107,21 +131,30 @@ public class UIManager : MonoBehaviour
 
     public void KakaoTipIn()
     {
+        if(tipTextTrigger == "Draw")
+        {
+            TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
+            tutorialEvent.skipKey = KeyCode.C;
+            tutorialEvent.tutorialText = "<swing><color=red>C키</color></swing>를 눌러 <bounce>그림</bounce> 덧그리기";
+            Debug.Log($"{tutorialEvent.tutorialText}");
+            TutorialEventHandle(tutorialEvent);
+            tipTextTrigger = "";
+        }
         tipNewText.gameObject.SetActive(false);
         kakaoTalk.transform.DOMove(kakaoTalkInPos.position, 1f).SetEase(Ease.OutBack);
-        UIHide();
     }
     public void UIHide() => chatButtonGroup.alpha = 0f;
     public void UIShow() => DOTween.To(() => chatButtonGroup.alpha, x => chatButtonGroup.alpha = x, 1f, 0.2f);
 
     public void KakaoTipOut()
     {
-        kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 1f).SetEase(Ease.InExpo).OnComplete(() => UIShow());
+        kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 1f).SetEase(Ease.InExpo);
     }
 
     private void TipDialogueStartHandle(StartTipDialogueEvent obj)
     {
         tipNewText.gameObject.SetActive(true);
         tipText.text = obj.tipText;
+        tipTextTrigger = obj.tipTrigger;
     }
 }
