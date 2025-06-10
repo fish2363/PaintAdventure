@@ -18,6 +18,7 @@ public class PlayerInPushState : EntityState
     public override void Enter()
     {
         base.Enter();
+        _player.OnPlayerChange?.Invoke(true);
         _player.GetCompo<ObjectUIComponent>().GetObjUI("PressW/S(Push)").GetComponent<TextMeshPro>().DOFade(1f,0.2f);
 
         SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;

@@ -9,6 +9,8 @@ public class PlayerGroundState : EntityState
 
     private float _flyTime;
 
+    private bool isJump;
+
     public PlayerGroundState(Entity entity, int animationHash) : base(entity, animationHash)
     {
         _player = entity as Player;
@@ -30,7 +32,7 @@ public class PlayerGroundState : EntityState
 
     private void OnUniqueActivityHandle()
     {
-        if (_player.CurrentPlayer().playerName == "Bear")
+        if (_player.CurrentPlayer().playerName == "Bear" && _mover.CanManualMove)
             _player.ChangeState("RUN");
         else
         {
@@ -60,13 +62,10 @@ public class PlayerGroundState : EntityState
     public override void Update()
     {
         base.Update();
-        //if (Physics.OverlapSphere(_entity.transform.position,4f))
-          //  _player.ChangeState("PUSH");
-
-        if (_mover.IsGroundDetected() == false && _mover.CanManualMove)
+        if (_mover.IsGroundDetected() == false && _mover.CanManualMove && !isJump)
         {
             _flyTime += Time.deltaTime;
-            if(_flyTime > 0.2f)
+            if (_flyTime > 0.5f)
                 _player.ChangeState("FALL");
         }
     }
@@ -75,18 +74,16 @@ public class PlayerGroundState : EntityState
         _player.InputReader.OnChangeKeyEvent -= HandleChangePlayer;
         _player.InputReader.OnJumpKeyEvent -= HandleJumpKeyPress;
         _player.InputReader.OnUniqueActivityKeyEvent -= OnUniqueActivityHandle;
+        isJump = false;
         base.Exit();
     }
 
 
-    private void OnCancelHandle()
-    {
-        _player.ChangeState("IDLE");
-    }
-
     private void HandleJumpKeyPress()
     {
         if (_mover.CanManualMove&&_mover.IsGroundDetected() && _player.CurrentPlayer().playerName == "Bear")
+        {
             _player.ChangeState("JUMP");
+        }
     }
 }

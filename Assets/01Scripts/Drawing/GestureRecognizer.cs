@@ -38,18 +38,23 @@ public class GestureRecognizer : MonoBehaviour
     [SerializeField] private GameObject flowerObject;
     [SerializeField] private GameObject treeObject;
 
+
     [Header("¼Õ")]
     [SerializeField] private GameObject drawingHand;
     [SerializeField] private GameObject moveHand;
 
     [Header("¿¬Ãâ")]
     [SerializeField] private GameObject floatText;
+    [SerializeField] private GameObject pointerPrefab;
+    private GameObject pointerObject;
+
 
     private void Start()
     {
         drawArea = new Rect(0, 0, Screen.width, Screen.height);
+        pointerObject = Instantiate(pointerPrefab,new Vector3(transform.position.x,transform.position.y,transform.position.z-10f), Quaternion.identity);
 
-        
+
 
         ////Load user custom gestures
         //string[] filePaths = Directory.GetFiles(Application.persistentDataPath, "*.xml");
@@ -92,6 +97,8 @@ public class GestureRecognizer : MonoBehaviour
 
                 currentGestureLineRenderer.positionCount = ++vertexCount;
                 currentGestureLineRenderer.SetPosition(vertexCount - 1, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10)));
+                if (gestureLinesRenderer[0].positionCount > 1)
+                    pointerObject.transform.position = gestureLinesRenderer[0].bounds.center;
             }
         }
     }

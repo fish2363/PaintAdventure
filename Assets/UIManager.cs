@@ -38,14 +38,32 @@ public class UIManager : MonoBehaviour
     private KeyCode skipKey;
     [SerializeField]
     private TextMeshProUGUI tutorialText;
+    [Header("퀘스트")]
+    [SerializeField]
+    private TextMeshProUGUI questText;
+    [SerializeField]
+    private GameObject questBox;
+    [SerializeField]
+    private Transform questBoxPos;
+
+    [Header("UI")]
+    [SerializeField] private GesturePaperManager paperManager;
 
     private void Awake()
     {
         uiChannel.AddListener<StartTipDialogueEvent>(TipDialogueStartHandle);
         uiChannel.AddListener<StageNameEvent>(StageNameHandle);
+        uiChannel.AddListener<QuestEvent>(QuestHandle);
         uiChannel.AddListener<SkillUIEvent>(SkillUIChangeHandle);
         uiChannel.AddListener<TutorialEvent>(TutorialEventHandle);
+        uiChannel.AddListener<GestureShow>(GestureShowEventHandle);
         InputReader.OnTipKeyEvent += TipUI;
+    }
+
+    private void QuestHandle(QuestEvent obj)
+    {
+        questText.text = obj.text;
+        questBox.transform.DOMove(questBoxPos.position, obj.duration).From();
     }
 
     private void TutorialEventHandle(TutorialEvent obj)
@@ -102,8 +120,20 @@ public class UIManager : MonoBehaviour
         uiChannel.RemoveListener<StageNameEvent>(StageNameHandle);
         uiChannel.RemoveListener<SkillUIEvent>(SkillUIChangeHandle);
         uiChannel.RemoveListener<TutorialEvent>(TutorialEventHandle);
+        uiChannel.RemoveListener<GestureShow>(GestureShowEventHandle);
+        uiChannel.RemoveListener<QuestEvent>(QuestHandle);
 
         InputReader.OnTipKeyEvent -= TipUI;
+    }
+
+    private void GestureShowEventHandle(GestureShow obj)
+    {
+        if (obj.gestureName == null)
+        {
+            paperManager.HideUI();
+            return;
+        }
+        paperManager.SetGesturePicture(obj.gestureName);
     }
 
     private void SkillUIChangeHandle(SkillUIEvent obj)
@@ -136,6 +166,15 @@ public class UIManager : MonoBehaviour
             TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
             tutorialEvent.skipKey = KeyCode.C;
             tutorialEvent.tutorialText = "<swing><color=red>C키</color></swing>를 눌러 <bounce>그림</bounce> 덧그리기";
+            Debug.Log($"{tutorialEvent.tutorialText}");
+            TutorialEventHandle(tutorialEvent);
+            tipTextTrigger = "";
+        }
+        if (tipTextTrigger == "Push")
+        {
+            TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
+            tutorialEvent.skipKey = KeyCode.Tab;
+            tutorialEvent.tutorialText = "<swing><color=red>Tab키</color></swing>를 눌러 <bounce>교체</bounce>하기";
             Debug.Log($"{tutorialEvent.tutorialText}");
             TutorialEventHandle(tutorialEvent);
             tipTextTrigger = "";

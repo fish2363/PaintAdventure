@@ -4,14 +4,14 @@ using UnityEngine.Events;
 public class StaticAnimalObjects : PinObject
 {
     [SerializeField]
-    private float radius;
-    [SerializeField]
-    private LayerMask whatIsPlayer;
-    [SerializeField]
     private LayerMask whatIsVagetable;
     [SerializeField] private VagetableType myWantVagetable;
     public UnityEvent OnHappyAnimal;
     public UnityEvent OnAngryAnimal;
+    [SerializeField]
+    private float radius;
+    [SerializeField]
+    private LayerMask whatIsPlayer;
 
     private void Update()
     {

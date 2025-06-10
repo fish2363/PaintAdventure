@@ -35,6 +35,7 @@ public class PlayerPushIdleState : EntityState
     }
     private void HandleCancelKeyPress()
     {
+        _player.OnPlayerChange?.Invoke(false);
         _player.GetCompo<ObjectUIComponent>().GetObjUI("PressW/S(Push)").GetComponent<TextMeshPro>().DOFade(0f, 0.2f);
 
         Object.Destroy(_player.GetComponent<FixedJoint>());

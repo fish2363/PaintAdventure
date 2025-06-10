@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : Entity
 {
@@ -15,7 +15,7 @@ public class Player : Entity
     private PlayerChanger _playerChanger;
     public Transform startPoint;
     public LayerMask whatIsDeadPlace;
-
+    public UnityEvent<bool> OnPlayerChange;
     
 
     protected override void Awake()
@@ -44,6 +44,7 @@ public class Player : Entity
     {
         int num = _playerChanger.currentPlayer.playerName == "Bear" ? 1 : 0;
         _playerChanger.ChangePlayer(num);
+        OnPlayerChange?.Invoke(false);
         ChangeState("CHANGE");
     }
     public void ReStartSet(bool isDead,string[] canGesture = null)

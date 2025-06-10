@@ -21,8 +21,7 @@ public class PlayerJumpState : PlayerAirState
     public override void Update()
     {
         base.Update();
-        if (_mover.IsGroundDetected())
-            _player.ChangeState("IDLE");
+
     }
 
     public override void Exit()
@@ -34,6 +33,6 @@ public class PlayerJumpState : PlayerAirState
     private void HandleVelocityChange(Vector2 velocity)
     {
         if (velocity.y < -2f)
-            _player.ChangeState("FALL");
+            _player.ChangeState("JUMPFALL");
     }
 }

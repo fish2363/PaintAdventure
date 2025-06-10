@@ -1,3 +1,5 @@
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class PlayerPushState : EntityState
@@ -30,6 +32,7 @@ public class PlayerPushState : EntityState
         Debug.Log("Push¿”");
         if (_mover.IsGroundDetected() == false)
         {
+            _player.GetCompo<ObjectUIComponent>().GetObjUI("PressW/S(Push)").GetComponent<TextMeshPro>().DOFade(0f, 0.2f);
             Object.Destroy(_player.GetComponent<FixedJoint>());
             _player.catchObj._RbCompo.mass = 1000f;
 

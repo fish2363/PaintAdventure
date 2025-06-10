@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "SO/Input",fileName = "newInput")]
 public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
 {
+    private Vector3 _worldPosition;
+
     [SerializeField] private LayerMask whatIsGround;
 
     public Vector2 MovementKey { get; private set; }
@@ -80,5 +82,17 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     {
         if (context.performed)
             OnTipKeyEvent?.Invoke();
+    }
+
+    public Vector3 GetWorldPosition(out RaycastHit hit)
+    {
+        Camera mainCam = Camera.main;
+        Ray camRay = mainCam.ScreenPointToRay(Input.mousePosition);
+        bool isHit = Physics.Raycast(camRay, out hit, mainCam.farClipPlane, whatIsGround);
+        if (isHit)
+        {
+            _worldPosition = hit.point;
+        }
+        return _worldPosition;
     }
 }

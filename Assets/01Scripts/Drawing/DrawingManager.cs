@@ -77,6 +77,11 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     public void SetDrawingMode(bool state)
     {
         FindAnyObjectByType<UIManager>().KakaoTipOut();
+
+        GestureShow gestureShow = UIEvents.GestureShow;
+        gestureShow.gestureName = null;
+        _player.UIChannel.RaiseEvent(gestureShow);
+
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
 
         isDrawing = state;

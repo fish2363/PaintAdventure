@@ -27,10 +27,16 @@ public class StageSystem : ExtendedMono
         stageNameEvent.duration = 3f;
         uiChannel.RaiseEvent(stageNameEvent);
 
-        StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-        startTipDialogueEvent.tipText = "좋아요. 우선\n지금까지 그리신 거 보면서 하나 하나\n피드백 해드릴게요";
-        uiChannel.RaiseEvent(startTipDialogueEvent);
-        FirstStartTutorial();
+        if(stageSet[currentStage].stageName =="시작의 초원")
+        {
+            StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
+            startTipDialogueEvent.tipText = "좋아요. 우선\n지금까지 그리신 거 보면서 하나 하나\n피드백 해드릴게요";
+            uiChannel.RaiseEvent(startTipDialogueEvent);
+            FirstStartTutorial();
+        }
+        GestureShow gestureShow = UIEvents.GestureShow;
+        gestureShow.gestureName = stageSet[currentStage].drawPictureName;
+        uiChannel.RaiseEvent(gestureShow);
 
         FindAnyObjectByType<Player>().ReStartSet(false, stageSet[currentStage].drawPictureName);
     }
