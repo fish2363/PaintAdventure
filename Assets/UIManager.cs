@@ -45,9 +45,12 @@ public class UIManager : MonoBehaviour
     private GameObject questBox;
     [SerializeField]
     private Transform questBoxPos;
+    private Vector3 prevTrans;
 
     [Header("UI")]
     [SerializeField] private GesturePaperManager paperManager;
+
+    private bool isProgress;
 
     private void Awake()
     {
@@ -62,15 +65,24 @@ public class UIManager : MonoBehaviour
 
     private void QuestHandle(QuestEvent obj)
     {
-        questText.text = obj.text;
-        questBox.transform.DOMove(questBoxPos.position, obj.duration).From();
+        Debug.Log("아잇잇앗");
+        if(!obj.isClear)
+        {
+            prevTrans = questBox.transform.position;
+            questText.text = obj.text;
+            questBox.transform.DOMove(questBoxPos.position, obj.duration);
+        }
+        else
+        {
+            questText.text = "<color=green>훌륭합니다!</color>";
+            questBox.transform.DOMove(prevTrans, obj.duration);
+        }
     }
 
     private void TutorialEventHandle(TutorialEvent obj)
     {
         tutorialText.DOFade(1f, 0.2f).OnComplete(() =>
         {
-            Debug.Log("와 ㅈ됏논");
             tutorialText.DOFade(1f, 0.2f);
             FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = false;
             skipKey = obj.skipKey;
@@ -101,11 +113,13 @@ public class UIManager : MonoBehaviour
     }
     private void TipUI()
     {
+        if (isProgress) return;
         if (isOnUI)
             KakaoTipOut();
         else
             KakaoTipIn();
         isOnUI = !isOnUI;
+        isProgress = true;
     }
 
     public void KakaoUIFade()
@@ -139,7 +153,7 @@ public class UIManager : MonoBehaviour
     private void SkillUIChangeHandle(SkillUIEvent obj)
     {
         if (obj.isHide) UIHide();
-        else UIShow();
+        else if(!obj.isHide) UIShow();
 
         if(obj.type.playerName == "Bear")
         {
@@ -166,34 +180,55 @@ public class UIManager : MonoBehaviour
             TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
             tutorialEvent.skipKey = KeyCode.C;
             tutorialEvent.tutorialText = "<swing><color=red>C키</color></swing>를 눌러 <bounce>그림</bounce> 덧그리기";
-            Debug.Log($"{tutorialEvent.tutorialText}");
+            Player.IsCanDraw = true;
             TutorialEventHandle(tutorialEvent);
             tipTextTrigger = "";
+
+            QuestEvent questEvnet = UIEvents.QuestEvent;
+            questEvnet.text = "나무 또는 꽃을 1개를\n그려 넣어주세요";
+            questEvnet.isClear = false;
+            questEvnet.duration = 3f;
+            uiChannel.RaiseEvent(questEvnet);
         }
         if (tipTextTrigger == "Push")
         {
             TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
             tutorialEvent.skipKey = KeyCode.Tab;
             tutorialEvent.tutorialText = "<swing><color=red>Tab키</color></swing>를 눌러 <bounce>교체</bounce>하기";
-            Debug.Log($"{tutorialEvent.tutorialText}");
+            Player.IsCanChange = true;
             TutorialEventHandle(tutorialEvent);
             tipTextTrigger = "";
         }
+        if (tipTextTrigger == "IronPlate")
+        {
+            QuestEvent questEvnet = UIEvents.QuestEvent;
+            questEvnet.text = "<swing><color=red>IronPlate</color></swing>를 소환해서\n버튼으로<bounce>밀어보세요</bounce>";
+            questEvnet.isClear = false;
+            questEvnet.duration = 3f;
+            uiChannel.RaiseEvent(questEvnet);
+
+            tipTextTrigger = "";
+        }
+        FindAnyObjectByType<Player>().ChangeState("IDLE");
         tipNewText.gameObject.SetActive(false);
-        kakaoTalk.transform.DOMove(kakaoTalkInPos.position, 1f).SetEase(Ease.OutBack);
+        kakaoTalk.transform.DOMove(kakaoTalkInPos.position, 1f).SetEase(Ease.OutBack).OnComplete(() => isProgress = false);
     }
     public void UIHide() => chatButtonGroup.alpha = 0f;
-    public void UIShow() => DOTween.To(() => chatButtonGroup.alpha, x => chatButtonGroup.alpha = x, 1f, 0.2f);
+    public void UIShow() => chatButtonGroup.alpha = 1f;
 
     public void KakaoTipOut()
     {
-        kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 1f).SetEase(Ease.InExpo);
+        kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 0.2f).SetEase(Ease.InExpo).OnComplete(() => isProgress = false);
     }
 
     private void TipDialogueStartHandle(StartTipDialogueEvent obj)
     {
-        tipNewText.gameObject.SetActive(true);
-        tipText.text = obj.tipText;
-        tipTextTrigger = obj.tipTrigger;
+        KakaoUIFade();
+        DOVirtual.DelayedCall(0.3f,()=>
+        {
+            tipNewText.gameObject.SetActive(true);
+            tipText.text = obj.tipText;
+            tipTextTrigger = obj.tipTrigger;
+        });
     }
 }

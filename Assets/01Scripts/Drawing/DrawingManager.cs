@@ -37,7 +37,7 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     }
     private void HandleDrawBtn(bool isHoldPencil)
     {
-        if (isOnDraw || currentCanGestures.Length < 1) return;
+        if (!Player.IsCanDraw || isOnDraw || currentCanGestures.Length < 1) return;
         SetDrawingMode(isHoldPencil);
     }
 
@@ -85,10 +85,7 @@ public class DrawManager : MonoBehaviour,IEntityComponent
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
 
         isDrawing = state;
-        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
-        skillUIEvent.isHide = state;
-
-        _player.UIChannel.RaiseEvent(skillUIEvent);
+        
         freeLook.enabled = !state;
         drawView.enabled = state;
 
@@ -120,6 +117,9 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     {
         drawingRenderer.transform.DOKill();
         drawingRenderer.SetActive(isEnabled);
+        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
+        skillUIEvent.isHide = isEnabled;
+        _player.UIChannel.RaiseEvent(skillUIEvent);
         if (isEnabled)
         {
             yield return drawingRenderer.transform.DOScale(new Vector3(0.1050295f, 0.05834971f, 0.05834971f), 0.5f).SetUpdate(true)

@@ -16,7 +16,11 @@ public class Player : Entity
     public Transform startPoint;
     public LayerMask whatIsDeadPlace;
     public UnityEvent<bool> OnPlayerChange;
-    
+
+    public static bool IsCanDraw;
+    public static bool IsCanChange;
+
+    public Transform secondPos;
 
     protected override void Awake()
     {
@@ -24,7 +28,17 @@ public class Player : Entity
         _stateMachine = new EntityStateMachine(this, stateDataList);
     }
 
-    
+    public void ChangeCanDraw(bool s)
+    {
+        IsCanDraw = s;
+    }
+
+    public void SaveToSecondPos(Transform trans)
+    {
+        if (trans == null) secondPos = null;
+        secondPos = trans;
+    }
+
     private void Start()
     {
         _playerChanger = GetComponentInChildren<PlayerChanger>();
@@ -49,7 +63,8 @@ public class Player : Entity
     }
     public void ReStartSet(bool isDead,string[] canGesture = null)
     {
-        transform.position = startPoint.position;
+        if (secondPos != null) transform.position = secondPos.position;
+        else transform.position = startPoint.position;
         if(!isDead)
             GetCompo<DrawManager>().currentCanGestures = canGesture;
     }
@@ -60,6 +75,7 @@ public class Player : Entity
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position,detectionDistance);
+        Gizmos.color = Color.white;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -68,6 +84,7 @@ public class Player : Entity
         {
             StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
             startTipDialogueEvent.tipText = "아이들이 볼 수도\n있으니까 죽는 모습은\n그리면 안돼요 ㅡㅡ";
+            startTipDialogueEvent.tipTrigger = "";
             UIChannel.RaiseEvent(startTipDialogueEvent);
             ReStartSet(true);
         }

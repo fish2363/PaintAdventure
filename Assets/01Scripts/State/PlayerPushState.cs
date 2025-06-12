@@ -30,11 +30,14 @@ public class PlayerPushState : EntityState
     {
         base.Update();
         Debug.Log("Push¿”");
+        Vector2 movementKey = _player.InputReader.MovementKey;
+
         if (_mover.IsGroundDetected() == false)
         {
             _player.GetCompo<ObjectUIComponent>().GetObjUI("PressW/S(Push)").GetComponent<TextMeshPro>().DOFade(0f, 0.2f);
             Object.Destroy(_player.GetComponent<FixedJoint>());
             _player.catchObj._RbCompo.mass = 1000f;
+            _player.catchObj._RbCompo.linearVelocity = Vector3.zero;
 
             SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
             skillUIEvent.isHide = false;
@@ -43,12 +46,12 @@ public class PlayerPushState : EntityState
             _player.ChangeState("IDLE");
         }
 
-        Vector2 movementKey = _player.InputReader.MovementKey;
+        _entityAnimator.animator.SetFloat("Y", movementKey.y);
 
-        if (Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0 && _mover.CanManualMove)
+        if (Mathf.Abs(movementKey.y) > 0 && _mover.CanManualMove)
             _mover.SetPushMovement(movementKey);
 
-        if (movementKey.magnitude < _inputThreshold)
+        if (movementKey.magnitude < _inputThreshold || !_mover.CanManualMove)
             _player.ChangeState("PUSHIDLE");
     }
 

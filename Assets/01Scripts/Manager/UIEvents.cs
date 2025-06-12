@@ -36,6 +36,7 @@ public class StageNameEvent : GameEvent
 public class QuestEvent : GameEvent
 {
     public string text;
+    public bool isClear;
     public float duration;
 }
 

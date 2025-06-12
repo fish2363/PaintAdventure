@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WakeUpMonster : ExtendedMono
 {
@@ -10,6 +11,7 @@ public class WakeUpMonster : ExtendedMono
     [SerializeField] private Material[] monsterOtherMaterial;
     private bool isOneTime;
     [SerializeField] ParticleSystem d;
+    public UnityEvent OnCutSceneEndEvent;
 
     private void Update()
     {
@@ -39,6 +41,7 @@ public class WakeUpMonster : ExtendedMono
         GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         d.Play();
         FindAnyObjectByType<StageSystem>().IsClear = true;
+        OnCutSceneEndEvent?.Invoke();
     }
 
     private void OnDrawGizmos()

@@ -29,8 +29,7 @@ public class PlayerPushIdleState : EntityState
             HandleCancelKeyPress();
 
         Vector2 movementKey = _player.InputReader.MovementKey;
-        _mover.SetPushMovement(movementKey);
-        if (movementKey.magnitude > _inputThreshold)
+        if (Mathf.Abs(movementKey.y) > _inputThreshold && _mover.CanManualMove)
             _player.ChangeState("PUSH");
     }
     private void HandleCancelKeyPress()
@@ -40,10 +39,6 @@ public class PlayerPushIdleState : EntityState
 
         Object.Destroy(_player.GetComponent<FixedJoint>());
         _player.catchObj._RbCompo.mass = 1000f;
-
-        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
-        skillUIEvent.isHide = false;
-        _player.UIChannel.RaiseEvent(skillUIEvent);
 
         _player.ChangeState("IDLE");
     }

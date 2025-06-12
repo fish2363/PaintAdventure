@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5752019954426865127}
   - component: {fileID: 8286355710134754120}
   - component: {fileID: 6676379602015074510}
+  - component: {fileID: 8244710416153792488}
   m_Layer: 0
   m_Name: FloatText
   m_TagString: Untagged
@@ -103,7 +104,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "75% \uC77C\uCE58"
+  m_text: "75% \uC77C\uCE58ddddddddddddddddddddd"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e553a38382b128438009d35233051f0, type: 2}
   m_sharedMaterial: {fileID: -2102064655854340731, guid: 5e553a38382b128438009d35233051f0, type: 2}
@@ -137,8 +138,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -146,7 +147,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -189,3 +190,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c19d5607c2aba24b99cc65a7c392b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8244710416153792488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4419693755188689224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8ace8ced0e81c847968cdca0aeda757, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typewriterStartsAutomatically: 0
+  animationLoop: 0
+  timeScale: 0
+  _text: 
+  useDynamicScaling: 1
+  referenceFontSize: 10
+  isResettingTimeOnNewText: 1
+  useDefaultDatabases: 1
+  databaseBehaviors: {fileID: 0}
+  databaseAppearances: {fileID: 0}
+  useDefaultStyleSheet: 1
+  styleSheet: {fileID: 0}
+  databaseActions: {fileID: 0}
+  defaultAppearancesTags:
+  - size
+  defaultDisappearancesTags:
+  - fade
+  defaultBehaviorsTags: []
+  defaultTagsMode: 0

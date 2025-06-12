@@ -16,6 +16,7 @@ public class PlayerChangeState : EntityState
     {
         base.Enter();
         _mover.CanManualMove = false;
+        _mover.StopImmediately();
         _animatorTrigger[idx].OnAnimationEndTrigger += ChangeHandle;
         _mover.ChangePlayer(_playerChanger.currentPlayer);
     }

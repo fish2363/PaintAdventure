@@ -27,7 +27,10 @@ public class PlayerGroundState : EntityState
     }
 
     private void HandleChangePlayer()
-    =>  _player.ChangePlayer();
+    {
+        if(Player.IsCanChange)
+        _player.ChangePlayer();
+    }
     
 
     private void OnUniqueActivityHandle()

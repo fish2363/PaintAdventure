@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3638455112132988328}
   - component: {fileID: 4802958034302216296}
   - component: {fileID: 5769976098357238871}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: tree
   m_TagString: Tree
   m_Icon: {fileID: 0}
@@ -54,8 +54,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.6216176, z: 1}
-  m_Center: {x: 0, y: 0.31852624, z: 0}
+  m_Size: {x: 1, y: 2.4597173, z: 1}
+  m_Center: {x: 0, y: 1.237576, z: 0}
 --- !u!54 &5769976098357238871
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -143,6 +143,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: d4c7a5fb02431b04693e813be6979c24, type: 2}
+    - target: {fileID: -5678685558726850539, guid: d6ac3bd58e0de464491477976f08bb1d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 300206378370512449, guid: d6ac3bd58e0de464491477976f08bb1d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -150,6 +154,18 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d6ac3bd58e0de464491477976f08bb1d, type: 3}
       propertyPath: m_Name
       value: Tree Leaf Cluster
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d6ac3bd58e0de464491477976f08bb1d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5679764477916969471, guid: d6ac3bd58e0de464491477976f08bb1d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6620528085794415197, guid: d6ac3bd58e0de464491477976f08bb1d, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -217,6 +233,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 7e681fa6e5f775b4c906c03f02f09208, type: 2}
+    - target: {fileID: -5188038726205005653, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: -1216307092706713902, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -224,6 +244,18 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
       propertyPath: m_Name
       value: Tree Trunnk
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1810713348093548294, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2850227402845684984, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8354505986981210943, guid: 0e0bd262338b48445be6b19ea8d32cf3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

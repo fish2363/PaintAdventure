@@ -21,10 +21,6 @@ public class PlayerInPushState : EntityState
         _player.OnPlayerChange?.Invoke(true);
         _player.GetCompo<ObjectUIComponent>().GetObjUI("PressW/S(Push)").GetComponent<TextMeshPro>().DOFade(1f,0.2f);
 
-        SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
-        skillUIEvent.isHide = true;
-        _player.UIChannel.RaiseEvent(skillUIEvent);
-
         _mover.CanManualMove = false;
 
         float minDistance = Mathf.Infinity;

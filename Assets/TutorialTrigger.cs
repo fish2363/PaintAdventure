@@ -19,13 +19,25 @@ public class TutorialTrigger : MonoBehaviour
     public void MoreDrawPls()
     {
         StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-        startTipDialogueEvent.tipText = "땅이 너무 허전해요\n나무랑 꽃 몇개라도\n그려서 넣어줘요";
+        startTipDialogueEvent.tipText = "음.. 지금 여기는 좀 심심하네요\n나무나 꽃 같은 거라도\n그려서 넣어줘요";
         startTipDialogueEvent.tipTrigger = "Draw";
         UIChannel.RaiseEvent(startTipDialogueEvent);
+    }
 
-        QuestEvent questEvnet = UIEvents.QuestEvent;
-        questEvnet.text = "나무 3개,꽃 1개를\n그려 넣어주세요";
-        questEvnet.duration = 3f;
+    public void DrawABridge()
+    {
+        StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
+        startTipDialogueEvent.tipText = "수영해서 가는 건\n아이들이 따라해서 안돼요\n다리를 그려서 넣어줘요";
+        startTipDialogueEvent.tipTrigger = "";
+        UIChannel.RaiseEvent(startTipDialogueEvent);
+    }
+
+    public void DrawWeight()
+    {
+        StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
+        startTipDialogueEvent.tipText = "버튼을 누를만한\n무거운 거 하나만\n더 그려줘요";
+        startTipDialogueEvent.tipTrigger = "IronPlate";
+        UIChannel.RaiseEvent(startTipDialogueEvent);
     }
 
     public void PushMonster()

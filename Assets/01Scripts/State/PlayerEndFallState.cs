@@ -9,6 +9,7 @@ public class PlayerEndFallState : PlayerAirState
     public override void Enter()
     {
         base.Enter();
+        _mover.StopImmediately();
         _animatorTrigger[idx].OnGetUpEvent += ChangeIdle;
         _mover.CanManualMove = false;
     }

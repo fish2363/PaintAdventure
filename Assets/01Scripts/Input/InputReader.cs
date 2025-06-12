@@ -43,7 +43,7 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
 
     public void OnDraw(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.performed)
             OnDrawingEvent?.Invoke(true);
         else if (context.canceled)
             OnDrawingEvent?.Invoke(false);

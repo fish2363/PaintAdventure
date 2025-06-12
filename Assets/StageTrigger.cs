@@ -4,6 +4,7 @@ using UnityEngine.Events;
 
 public class StageTrigger : MonoBehaviour
 {
+    [SerializeField] private GameEventChannelSO UIChannel;
     [SerializeField] private int maxflowerCount;
     [SerializeField] private int maxtreeCount;
     [SerializeField] private ParticleSystem system;
@@ -33,6 +34,10 @@ public class StageTrigger : MonoBehaviour
             isEnd = true;
             system.Play();
             OnCountFullEvent?.Invoke();
+            QuestEvent questEvnet = UIEvents.QuestEvent;
+            questEvnet.isClear = true;
+            questEvnet.duration = 3f;
+            UIChannel.RaiseEvent(questEvnet);
             Destroy(this);
         }    
     }

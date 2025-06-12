@@ -30,7 +30,7 @@ public class StageSystem : ExtendedMono
         if(stageSet[currentStage].stageName =="시작의 초원")
         {
             StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-            startTipDialogueEvent.tipText = "좋아요. 우선\n지금까지 그리신 거 보면서 하나 하나\n피드백 해드릴게요";
+            startTipDialogueEvent.tipText = "곰돌이가 주인공?\n일단 만화를 더 봐야\n알겠네요 앞으로 가요\n지켜보면서 피드백\n해드릴게요";
             uiChannel.RaiseEvent(startTipDialogueEvent);
             FirstStartTutorial();
         }
@@ -57,6 +57,7 @@ public class StageSystem : ExtendedMono
     public void StageClear()
     {
         IsClear = false;
+        FindAnyObjectByType<Player>().SaveToSecondPos(null);
         FindAnyObjectByType<Player>().GetCompo<EntityMover>().RbCompo.isKinematic = true;
         stageSet[currentStage].stage.SetActive(false);
         _director.gameObject.SetActive(true);

@@ -34,9 +34,10 @@ public class GestureRecognizer : MonoBehaviour
     [SerializeField] private GameObject carrotPrefab;
     [SerializeField] private GameObject applePrefab;
     [SerializeField] private GameObject pepperPrefab;
-    [SerializeField] private GameObject bridgeObject;
     [SerializeField] private GameObject flowerObject;
     [SerializeField] private GameObject treeObject;
+    private GameObject currentBridgeObject;
+    private GameObject metalObj;
 
 
     [Header("손")]
@@ -73,7 +74,7 @@ public class GestureRecognizer : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(0))
             {
-
+                pointerObject.SetActive(true);
                 moveHand.SetActive(false);
                 drawingHand.SetActive(true);
 
@@ -88,6 +89,7 @@ public class GestureRecognizer : MonoBehaviour
             }
             if(Input.GetMouseButtonUp(0))
             {
+                pointerObject.SetActive(false);
                 drawingHand.SetActive(false);
                 moveHand.SetActive(true);
             }
@@ -135,6 +137,7 @@ public class GestureRecognizer : MonoBehaviour
 
         if (gestureResult.Score < .8f)
         {
+            InitFloatText(gestureLinesRenderer[0].bounds.center, gestureResult.Score,"Error");
             ClearLine();
             return;
         }
@@ -197,7 +200,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(applePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform,percent);
+            InitFloatText(b.transform.position, percent);
             ClearLine();
         }
         if (gestureName == "Flower")
@@ -205,7 +208,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(flowerObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform, percent);
+            InitFloatText(b.transform.position, percent);
 
             ClearLine();
         }
@@ -214,7 +217,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(treeObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform, percent);
+            InitFloatText(b.transform.position, percent);
 
             ClearLine();
         }
@@ -225,9 +228,10 @@ public class GestureRecognizer : MonoBehaviour
         if (gestureName == "MetalPlate")
         {
             Debug.Log("시바");
-            GameObject b = Instantiate(ironPlatePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
-            b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform, percent);
+            if (metalObj != null) Destroy(metalObj);
+            metalObj = Instantiate(ironPlatePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
+            metalObj.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+            InitFloatText(metalObj.transform.position, percent);
 
             ClearLine();
         }
@@ -236,7 +240,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(carrotPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform, percent);
+            InitFloatText(b.transform.position, percent);
 
             ClearLine();
         }
@@ -246,7 +250,7 @@ public class GestureRecognizer : MonoBehaviour
             Debug.Log("시바");
             GameObject b = Instantiate(pepperPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform, percent);
+            InitFloatText(b.transform.position, percent);
 
             ClearLine();
         }
@@ -261,18 +265,22 @@ public class GestureRecognizer : MonoBehaviour
                 Debug.Log("감지됨");
                 if (hit.collider.CompareTag("DrawArea"))
                 {
-                    bridgeObject.SetActive(true);
-                    InitFloatText(bridgeObject.transform, percent);
+                    if (currentBridgeObject != null) currentBridgeObject.SetActive(false);
+                    currentBridgeObject = hit.collider.GetComponent<BridgeAera>().bridge;
+                    currentBridgeObject.SetActive(true);
+                    InitFloatText(currentBridgeObject.transform.position, percent);
 
                 }
             }
+            else
+                InitFloatText(gestureLinesRenderer[0].bounds.center, percent,"BridgeError");
             ClearLine();
         }
         if (gestureName == "ChickSummon")
         {
             Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-            InitFloatText(b.transform, percent);
+            InitFloatText(b.transform.position, percent);
 
             ClearLine();
         }
@@ -289,7 +297,7 @@ public class GestureRecognizer : MonoBehaviour
                 Debug.Log(hit.collider.name);
                 Transform b = Instantiate(balloonPrefab, hit.collider.transform);
                 b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
-                InitFloatText(b.transform, percent);
+                InitFloatText(b.transform.position, percent);
 
                 ClearLine();
             }
@@ -297,9 +305,16 @@ public class GestureRecognizer : MonoBehaviour
         Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
     }
 
-    public void InitFloatText(Transform spawnPos,float percent)
+    public void InitFloatText(Vector3 spawnPos,float percent,string name="Percent")
     {
-        Instantiate(floatText,new Vector3(spawnPos.position.x,spawnPos.position.y,spawnPos.position.z - 1f),Quaternion.identity).GetComponent<TextMeshPro>().text = $"{percent.ToString().Substring(0,2)}% 일치";
+        if(name == "Percent" && percent > 95f)
+            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<color=green>{percent.ToString().Substring(0, 2)}% 일치</color>";
+        else if (name == "Percent")
+            Instantiate(floatText,new Vector3(spawnPos.x,spawnPos.y,spawnPos.z - 1f),Quaternion.identity).GetComponent<TextMeshPro>().text = $"{percent.ToString().Substring(0,2)}% 일치";
+        else if(name == "BridgeError")
+            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<color=red>생성 가능 지역이 아닙니다.</color>";
+        else if(name=="Error")
+            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<shake>80% 이상 일치해야 합니다 ({(percent*100).ToString().Substring(0,2)}%)</shake>";
     }
     private void OnDrawGizmos()
     {
