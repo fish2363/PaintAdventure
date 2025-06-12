@@ -88,10 +88,6 @@ public class UIManager : MonoBehaviour
             skipKey = obj.skipKey;
             tutorialText.text =obj.tutorialText;
             isWaitTargetKeyPress = true;
-
-            SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
-            skillUIEvent.isHide = true;
-            SkillUIChangeHandle(skillUIEvent);
         }
         );
     }
@@ -105,10 +101,6 @@ public class UIManager : MonoBehaviour
             FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = true;
             isWaitTargetKeyPress = false;
             skipKey = KeyCode.None;
-
-            SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
-            skillUIEvent.isHide = false;
-            SkillUIChangeHandle(skillUIEvent);
         }
     }
     private void TipUI()

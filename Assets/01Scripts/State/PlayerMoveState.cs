@@ -24,7 +24,7 @@ public class PlayerMoveState : PlayerGroundState
         if (Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0 && _mover.CanManualMove)
             _mover.SetMovementDirection(movementKey);
 
-        if (movementKey.magnitude < _inputThreshold || !_mover.CanManualMove)
+        if (Mathf.Abs(movementKey.magnitude) < _inputThreshold || !_mover.CanManualMove)
             _player.ChangeState("IDLE");
     }
 }

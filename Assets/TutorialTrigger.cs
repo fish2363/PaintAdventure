@@ -19,10 +19,11 @@ public class TutorialTrigger : MonoBehaviour
     public void MoreDrawPls()
     {
         StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-        startTipDialogueEvent.tipText = "음.. 지금 여기는 좀 심심하네요\n나무나 꽃 같은 거라도\n그려서 넣어줘요";
+        startTipDialogueEvent.tipText = "음.. 지금 여기는\n좀 심심하네요 나무나 꽃\n같은 거라도 그려서 넣어줘요";
         startTipDialogueEvent.tipTrigger = "Draw";
         UIChannel.RaiseEvent(startTipDialogueEvent);
     }
+
 
     public void DrawABridge()
     {
@@ -43,7 +44,7 @@ public class TutorialTrigger : MonoBehaviour
     public void PushMonster()
     {
         StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-        startTipDialogueEvent.tipText = "노란색 친구도 같이\n모험하는 편이 좋지 않을까요?";
+        startTipDialogueEvent.tipText = "노란색 친구도 같이\n모험하는 편이\n좋지 않을까요?";
         startTipDialogueEvent.tipTrigger = "Push";
         UIChannel.RaiseEvent(startTipDialogueEvent);
     }

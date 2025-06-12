@@ -14,8 +14,11 @@ public class PlayerIdleState : PlayerGroundState
     {
         base.Update();
         Vector2 movementKey = _player.InputReader.MovementKey;
-        if (movementKey.magnitude > _inputThreshold && _mover.CanManualMove) 
+        if (movementKey.magnitude > _inputThreshold && _mover.CanManualMove)
         {
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+                _player.ChangeState("RUN");
+            else
             _player.ChangeState("MOVE");
         }
     }

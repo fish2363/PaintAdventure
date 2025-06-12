@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Playables;
 

@@ -79,7 +79,7 @@ public class GestureRecognizer : MonoBehaviour
                 drawingHand.SetActive(true);
 
                 ++strokeId;
-                Transform tmpGesture = Instantiate(gestureOnScreenPrefab, transform.position, transform.rotation) as Transform;
+                Transform tmpGesture = Instantiate(gestureOnScreenPrefab, transform.position, transform.rotation);
                 currentGestureLineRenderer = tmpGesture.GetComponent<LineRenderer>();
                 //Selection.activeGameObject = tmpGesture.gameObject;
 

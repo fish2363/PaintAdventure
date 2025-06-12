@@ -5,11 +5,8 @@ using UnityEngine.Events;
 public class StageTrigger : MonoBehaviour
 {
     [SerializeField] private GameEventChannelSO UIChannel;
-    [SerializeField] private int maxflowerCount;
-    [SerializeField] private int maxtreeCount;
     [SerializeField] private ParticleSystem system;
-    private int curretFlowerCount;
-    private int curretTreeCount;
+    private int curretObjCount;
     public UnityEvent OnCountFullEvent;
     private bool isEnd;
 
@@ -18,18 +15,18 @@ public class StageTrigger : MonoBehaviour
         if(collision.gameObject.CompareTag("Tree"))
         {
             Debug.Log("³ª¹«");
-            curretTreeCount++;
+            curretObjCount++;
         }
         if (collision.gameObject.CompareTag("Flower"))
         {
             Debug.Log("²É");
-            curretFlowerCount++;
+            curretObjCount++;
         }
     }
 
     private void Update()
     {
-        if((curretFlowerCount >= maxflowerCount && curretTreeCount >= maxtreeCount)&&!isEnd)
+        if(curretObjCount > 0 && !isEnd)
         {
             isEnd = true;
             system.Play();

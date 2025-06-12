@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerRunState : PlayerGroundState
 {
+    private float michineHardCoding;
     public PlayerRunState(Entity entity, int animationHash) : base(entity, animationHash)
     {
     }
@@ -27,8 +28,14 @@ public class PlayerRunState : PlayerGroundState
         if (Mathf.Abs(movementKey.x) > 0 || Mathf.Abs(movementKey.y) > 0 && _mover.CanManualMove)
             _mover.SetMovementDirection(movementKey);
 
-        if (movementKey.magnitude < _inputThreshold)
-            _player.ChangeState("IDLE");
+        if (Mathf.Abs(movementKey.magnitude) < _inputThreshold)
+        {
+            michineHardCoding += Time.deltaTime;
+            if (michineHardCoding > 0.1f)
+                _player.ChangeState("IDLE");
+        }
+        else
+            michineHardCoding = 0f;
     }
 
     public override void Exit()
