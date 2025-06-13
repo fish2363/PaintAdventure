@@ -39,6 +39,7 @@ public class PlayerPushIdleState : EntityState
 
         Object.Destroy(_player.GetComponent<FixedJoint>());
         _player.catchObj._RbCompo.mass = 1000f;
+        _player.catchObj._RbCompo.linearVelocity = Vector3.zero;
 
         _player.ChangeState("IDLE");
     }

@@ -18,6 +18,7 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     public event Action OnUniqueActivityKeyEvent;
     public event Action OnCancelRunKeyEvent;
     public event Action OnChangeKeyEvent;
+    public event Action OnESCKeyEvent;
 
     public event Action OnTipKeyEvent;
 
@@ -96,5 +97,13 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
             _worldPosition = hit.point;
         }
         return _worldPosition;
+    }
+
+    public void OnESC(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            OnESCKeyEvent?.Invoke();
+        }
     }
 }

@@ -18,7 +18,6 @@ public class TriggerEvent : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             OnTriggerEvent?.Invoke();
-            GetComponent<Collider>().enabled = false;
         }
     }
 }

@@ -98,6 +98,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ESC"",
+                    ""type"": ""Button"",
+                    ""id"": ""2507db52-e5a2-41f4-8ebd-51b8fb4dac0f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -232,6 +241,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Tip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""12dd11ee-6818-492b-81c6-0488c9e23056"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ESC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -248,6 +268,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_UniqueActivity = m_Player.FindAction("UniqueActivity", throwIfNotFound: true);
         m_Player_PlayerChange = m_Player.FindAction("PlayerChange", throwIfNotFound: true);
         m_Player_Tip = m_Player.FindAction("Tip", throwIfNotFound: true);
+        m_Player_ESC = m_Player.FindAction("ESC", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -322,6 +343,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_UniqueActivity;
     private readonly InputAction m_Player_PlayerChange;
     private readonly InputAction m_Player_Tip;
+    private readonly InputAction m_Player_ESC;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -334,6 +356,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @UniqueActivity => m_Wrapper.m_Player_UniqueActivity;
         public InputAction @PlayerChange => m_Wrapper.m_Player_PlayerChange;
         public InputAction @Tip => m_Wrapper.m_Player_Tip;
+        public InputAction @ESC => m_Wrapper.m_Player_ESC;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -367,6 +390,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Tip.started += instance.OnTip;
             @Tip.performed += instance.OnTip;
             @Tip.canceled += instance.OnTip;
+            @ESC.started += instance.OnESC;
+            @ESC.performed += instance.OnESC;
+            @ESC.canceled += instance.OnESC;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -395,6 +421,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Tip.started -= instance.OnTip;
             @Tip.performed -= instance.OnTip;
             @Tip.canceled -= instance.OnTip;
+            @ESC.started -= instance.OnESC;
+            @ESC.performed -= instance.OnESC;
+            @ESC.canceled -= instance.OnESC;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -422,5 +451,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnUniqueActivity(InputAction.CallbackContext context);
         void OnPlayerChange(InputAction.CallbackContext context);
         void OnTip(InputAction.CallbackContext context);
+        void OnESC(InputAction.CallbackContext context);
     }
 }
