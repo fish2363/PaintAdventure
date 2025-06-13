@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Entity : ExtendedMono
 {
     public bool IsDead { get; set; }
+    public UnityEvent OnDeadEvent;
     protected Dictionary<Type, IEntityComponent> _components = new Dictionary<Type, IEntityComponent>();
 
     protected virtual void Awake()

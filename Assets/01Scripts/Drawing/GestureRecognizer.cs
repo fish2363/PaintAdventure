@@ -269,7 +269,7 @@ public class GestureRecognizer : MonoBehaviour
                     currentBridgeObject = hit.collider.GetComponent<BridgeAera>().bridge;
                     currentBridgeObject.SetActive(true);
                     InitFloatText(currentBridgeObject.transform.position, percent);
-
+                    pointerObject.SetActive(false);
                 }
             }
             else
@@ -294,8 +294,9 @@ public class GestureRecognizer : MonoBehaviour
 
             if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, layerMask))
             {
-                Debug.Log(hit.collider.name);
                 Transform b = Instantiate(balloonPrefab, hit.collider.transform);
+                if(hit.collider.TryGetComponent(out StaticAnimalObjects staticAnimal))
+                    staticAnimal.OnflYAnimal?.Invoke();
                 b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
                 InitFloatText(b.transform.position, percent);
 

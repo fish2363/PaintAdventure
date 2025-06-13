@@ -8,6 +8,7 @@ public class StaticAnimalObjects : PinObject
     [SerializeField] private VagetableType myWantVagetable;
     public UnityEvent OnHappyAnimal;
     public UnityEvent OnAngryAnimal;
+    public UnityEvent OnflYAnimal;
     [SerializeField]
     private float radius;
     [SerializeField]

@@ -82,11 +82,13 @@ public class Player : Entity
     {
         if(collision.gameObject.tag == "Dead")
         {
+            string[] dialogue = { "아니 떨어지는 걸\n그리시면 어떡해요..", "아이들이 볼 수도\n있으니까 죽는 모습은\n그리면 안돼요 ㅡㅡ" };
             StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-            startTipDialogueEvent.tipText = "아이들이 볼 수도\n있으니까 죽는 모습은\n그리면 안돼요 ㅡㅡ";
+            startTipDialogueEvent.tipText = dialogue;
             startTipDialogueEvent.tipTrigger = "";
             UIChannel.RaiseEvent(startTipDialogueEvent);
             ReStartSet(true);
+            OnDeadEvent?.Invoke();
         }
     }
 }

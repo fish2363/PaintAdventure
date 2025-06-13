@@ -21,6 +21,8 @@ public class StageSystem : ExtendedMono
     [Header("디죨브")]
     [SerializeField] private SkinnedMeshRenderer[] dissolvesMaterials;
 
+    [SerializeField] private string[] startDialogue;
+
     private void Start()
     {
         StageNameEvent stageNameEvent = UIEvents.StageNameEvent;
@@ -28,10 +30,10 @@ public class StageSystem : ExtendedMono
         stageNameEvent.duration = 3f;
         uiChannel.RaiseEvent(stageNameEvent);
 
-        if(stageSet[currentStage].stageName =="시작의 초원")
+        if(stageSet[currentStage].stageName =="시작의 길")
         {
             StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
-            startTipDialogueEvent.tipText = "곰돌이가 주인공?\n일단 만화를 더 봐야\n알겠네요 앞으로 가요\n지켜보면서 피드백\n해드릴게요";
+            startTipDialogueEvent.tipText = startDialogue;
             uiChannel.RaiseEvent(startTipDialogueEvent);
             FirstStartTutorial();
         }

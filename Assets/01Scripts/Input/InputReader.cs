@@ -14,6 +14,8 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     private PlayerInput inputs;
 
     public event Action<bool> OnDrawingEvent;
+    private bool isDrawing;
+
     public event Action OnJumpKeyEvent;
     public event Action OnUniqueActivityKeyEvent;
     public event Action OnCancelRunKeyEvent;
@@ -47,9 +49,18 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     public void OnDraw(InputAction.CallbackContext context)
     {
         if (context.performed)
-            OnDrawingEvent?.Invoke(true);
-        else if(context.canceled)
-            OnDrawingEvent?.Invoke(false);
+        {
+            if(!isDrawing)
+            {
+                OnDrawingEvent?.Invoke(true);
+                isDrawing = true;
+            }
+            else
+            {
+                OnDrawingEvent?.Invoke(false);
+                isDrawing = false;
+            }
+        }
     }
 
     public void OnInteractable(InputAction.CallbackContext context)

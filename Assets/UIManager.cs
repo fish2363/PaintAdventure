@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,7 +19,9 @@ public class UIManager : MonoBehaviour
     [field : SerializeField] private CanvasGroup chatButtonGroup;
     [field : SerializeField] private TextMeshProUGUI tipText;
     [field : SerializeField] private Image tipNewText;
+    private string[] currentDialogue;
     private string tipTextTrigger;
+    private int currentTalk;
 
     [Header("½ºÅ³UI")]
     public GameObject runSkill;
@@ -32,7 +35,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform _uiUpPos;
 
-    private bool isOnUI;
     [Header("Æ©Åä¸®¾ó UI")]
     private bool isWaitTargetKeyPress;
     private KeyCode skipKey;
@@ -49,8 +51,13 @@ public class UIManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GesturePaperManager paperManager;
+    [SerializeField] private CanvasGroup startPaper;
 
     private bool isProgress;
+
+
+    private bool isClick;
+    private bool isWaitClick;
 
     private void Awake()
     {
@@ -62,10 +69,15 @@ public class UIManager : MonoBehaviour
         uiChannel.AddListener<GestureShow>(GestureShowEventHandle);
         InputReader.OnTipKeyEvent += TipUI;
     }
-
+    private void Start()
+    {
+        DOVirtual.DelayedCall(2f,() =>
+        {
+            startPaper.DOFade(0f, 1f);
+        });
+    }
     private void QuestHandle(QuestEvent obj)
     {
-        Debug.Log("¾ÆÀÕÀÕ¾Ñ");
         if(!obj.isClear)
         {
             prevTrans = questBox.transform.position;
@@ -98,33 +110,43 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if(isWaitTargetKeyPress && Input.GetKeyDown(skipKey))
+        if (Input.GetMouseButtonDown(0) && isWaitClick)
+            isClick = true;
+
+        if (isWaitTargetKeyPress && Input.GetKeyDown(skipKey))
         {
             tutorialText.DOFade(0f,0.2f).OnComplete(()=> tutorialText.text ="");
-            FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = true;
             isWaitTargetKeyPress = false;
             skipKey = KeyCode.None;
             SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
             skillUIEvent.isHide = false;
             uiChannel.RaiseEvent(skillUIEvent);
+            if(!isProgress)
+            FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = true;
         }
     }
     private void TipUI()
     {
         if (isProgress) return;
-        if (isOnUI)
-            KakaoTipOut();
-        else
-            KakaoTipIn();
-        isOnUI = !isOnUI;
+
         isProgress = true;
+        KakaoTipIn();
     }
 
-    public void KakaoUIFade()
+    public bool DelayWaitClick()
     {
-        isOnUI = false;
-        KakaoTipOut();
+        isWaitClick = true;
+        if (isClick)
+        {
+            kakaoTalk.transform.DOKill();
+            isWaitClick = false;
+            isClick = false;
+            return true;
+        }
+        else return false;
     }
+
+    public void KakaoUIFade() => KakaoTipOut();
 
     private void OnDestroy()
     {
@@ -170,10 +192,20 @@ public class UIManager : MonoBehaviour
         _stageText.text = obj.Text;
         _stageText.rectTransform.DOMove(_uiDownPos.position,obj.duration).SetEase(Ease.OutBounce).OnComplete(()=> _stageText.rectTransform.DOMove(_uiUpPos.position, obj.duration));
     }
-
-    public void KakaoTipIn()
+    public IEnumerator KakaoTalk()
     {
-        if(tipTextTrigger == "Draw")
+        while (currentTalk < currentDialogue.Length)
+        {
+            tipText.text = currentDialogue[currentTalk];
+            kakaoTalk.transform.DOMove(kakaoTalkInPos.position, 1f).SetEase(Ease.OutBack).WaitForCompletion();
+            yield return new WaitUntil(() => DelayWaitClick());
+            kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 0.5f).WaitForCompletion();
+            currentTalk++;
+        }
+        FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = true;
+        isProgress = false;
+        currentTalk = 0;
+        if (tipTextTrigger == "Draw")
         {
             TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
             tutorialEvent.skipKey = KeyCode.C;
@@ -207,16 +239,21 @@ public class UIManager : MonoBehaviour
 
             tipTextTrigger = "";
         }
-        FindAnyObjectByType<Player>().ChangeState("IDLE");
-        tipNewText.gameObject.SetActive(false);
-        kakaoTalk.transform.DOMove(kakaoTalkInPos.position, 1f).SetEase(Ease.OutBack).OnComplete(() => isProgress = false);
     }
+    public void KakaoTipIn()
+    {
+        FindAnyObjectByType<Player>().ChangeState("IDLE");
+        FindAnyObjectByType<Player>().GetCompo<EntityMover>().CanManualMove = false;
+        tipNewText.gameObject.SetActive(false);
+        StartCoroutine(KakaoTalk());
+    }
+
     public void UIHide() => chatButtonGroup.alpha = 0f;
     public void UIShow() => chatButtonGroup.alpha = 1f;
 
     public void KakaoTipOut()
     {
-        kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 0.2f).SetEase(Ease.InExpo).OnComplete(() => isProgress = false);
+        kakaoTalk.transform.DOMove(kakaoTalkOutPos.position, 0.2f).SetEase(Ease.InExpo).OnComplete(()=>isProgress=false);
     }
 
     private void TipDialogueStartHandle(StartTipDialogueEvent obj)
@@ -225,7 +262,7 @@ public class UIManager : MonoBehaviour
         DOVirtual.DelayedCall(0.3f,()=>
         {
             tipNewText.gameObject.SetActive(true);
-            tipText.text = obj.tipText;
+            currentDialogue = obj.tipText;
             tipTextTrigger = obj.tipTrigger;
         });
     }
