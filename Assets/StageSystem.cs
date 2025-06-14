@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using DG.Tweening;
 using System;
 using System.Collections;
@@ -8,6 +9,7 @@ using UnityEngine.Playables;
 public class StageSystem : ExtendedMono
 {
     public GameObject scetch;
+    [SerializeField] private SoundID stage234BGM;
     public Ease ease;
     public PlayableDirector _director;
     public StageSet[] stageSet;
@@ -30,13 +32,15 @@ public class StageSystem : ExtendedMono
         stageNameEvent.duration = 3f;
         uiChannel.RaiseEvent(stageNameEvent);
 
-        if(stageSet[currentStage].stageName =="시작의 길")
+        if (stageSet[currentStage].stageName == "시작의 길")
         {
             StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
             startTipDialogueEvent.tipText = startDialogue;
             uiChannel.RaiseEvent(startTipDialogueEvent);
             FirstStartTutorial();
         }
+        else
+            BroAudio.Play(stage234BGM);
         GestureShow gestureShow = UIEvents.GestureShow;
         gestureShow.gestureName = stageSet[currentStage].drawPictureName;
         uiChannel.RaiseEvent(gestureShow);

@@ -4,9 +4,13 @@ using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System;
+using Ami.BroAudio;
 
 public class MainMenuDrawing : MonoBehaviour
 {
+    public SoundID mainmenuBGM;
     public List<Transform> movePos;
     public Transform pencil;
     private int currentIdx;
@@ -16,20 +20,48 @@ public class MainMenuDrawing : MonoBehaviour
     public CinemachineCamera escCamera;
     public CinemachineCamera exitCamera;
 
+
+
     [SerializeField]
     private Image _black;
 
     private bool isChooseWait;
 
+    public Button button;
+    public ESC targetESC;
+
+    private void Awake()
+    {
+        button.onClick.AddListener(ChooseCencal);
+        BroAudio.Play(mainmenuBGM);
+    }
+    private void OnDestroy()
+    {
+        button.onClick.RemoveListener(ChooseCencal);
+    }
+
     public void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Backspace) && isChooseWait)
+        if (Input.GetMouseButtonDown(0)) // 마우스 왼쪽 클릭
         {
-            escCamera.gameObject.SetActive(false);
-            exitCamera.gameObject.SetActive(false);
-            isChooseWait = false;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log("클릭한 오브젝트: " + hit.collider.gameObject.name);
+            }
+            else
+            {
+                Debug.Log("아무것도 클릭되지 않음.");
+            }
         }
-        if(Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetKeyDown(KeyCode.Backspace) && isChooseWait)
+        {
+            ChooseCencal();
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (movePos[currentIdx].name == "Setting")
             {
@@ -40,6 +72,7 @@ public class MainMenuDrawing : MonoBehaviour
             {
                 isChooseWait = true;
                 exitCamera.gameObject.SetActive(true);
+                targetESC.ShowEXITCanvas();
             }
             if (movePos[currentIdx].name =="Start")
             {
@@ -78,7 +111,11 @@ public class MainMenuDrawing : MonoBehaviour
                     },
                     360f,
                     2f))
-                    .AppendCallback(() => SceneManager.LoadScene("CutScene"));
+                    .AppendCallback(() =>
+                    {
+                        BroAudio.Stop(mainmenuBGM);
+                        SceneManager.LoadScene("CutScene");
+                        });
 
                 DOVirtual.DelayedCall(2f,() =>
                 {
@@ -100,5 +137,12 @@ public class MainMenuDrawing : MonoBehaviour
             pencil.DORotate(new Vector3(0f, pencil.rotation.y + 90f * currentIdx, 0f), 0.7f).SetRelative();
             pencil.DOMove(movePos[currentIdx].position, 0.4f).SetEase(pushRight);
         }
+    }
+
+    private void ChooseCencal()
+    {
+        escCamera.gameObject.SetActive(false);
+        exitCamera.gameObject.SetActive(false);
+        isChooseWait = false;
     }
 }

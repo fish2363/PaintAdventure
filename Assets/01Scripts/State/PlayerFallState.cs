@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using System.Collections;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ public class PlayerFallState : PlayerAirState
             SkillUIEvent skillUIEvent = UIEvents.SkillUIEvent;
             skillUIEvent.isHide = false;
             _player.UIChannel.RaiseEvent(skillUIEvent);
-
+            BroAudio.Play(_player.fallSound);
             _player.ChangeState("ENDFALL");
         }
     }

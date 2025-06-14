@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using DG.Tweening;
 using System.Collections;
 using TMPro;
@@ -8,6 +9,8 @@ using UnityEngine.Video;
 
 public class VideoSceneLogic : MonoBehaviour
 {
+    [SerializeField] private SoundID introSound;
+    [SerializeField] private SoundID kakaoSound;
     [SerializeField]
     private Image _black;
     [SerializeField]
@@ -34,6 +37,7 @@ public class VideoSceneLogic : MonoBehaviour
 
     private void Start()
     {
+        BroAudio.Play(introSound);
         _black.DOFade(0f,0.5f);
         StartCoroutine(WaitRoutine());
     }
@@ -78,6 +82,7 @@ public class VideoSceneLogic : MonoBehaviour
 
     private void PauseEvent()
     {
+        BroAudio.Stop(introSound);
         introVideo.Stop();
         isVideoEnd = true;
         pauseImage.gameObject.SetActive(true);
@@ -88,6 +93,7 @@ public class VideoSceneLogic : MonoBehaviour
         while(true)
         {
             if (currentTalk >= talks.Length) break;
+            BroAudio.Play(kakaoSound);
             kakaoText.text = talks[currentTalk];
             kakaoUI.DOMove(kakaoInPos.position, 1f).WaitForCompletion();
             yield return new WaitUntil(()=>DelayWaitClick());

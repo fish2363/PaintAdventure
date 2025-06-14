@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4c7638f6ce6aa46a31b60a75a1c290, type: 3}
+  m_Name: Flower
+  m_EditorClassIdentifier: 
+  gestureImage: {fileID: 21300000, guid: b9f4704a5baa8c341b390a13ffd4e07f, type: 3}
+  gestureName: "\uAF43"
+  gestureFileName: Flower

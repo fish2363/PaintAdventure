@@ -16,4 +16,8 @@ MonoBehaviour:
     keys: []
     values: []
   bookmarks: []
-  bookmarkedScenePaths: []
+  bookmarkedScenePaths:
+  - Assets/00.Scenes/TestKYH.unity
+  - Assets/00.Scenes/CutScene.unity
+  - Assets/00.Scenes/MainMenu.unity
+  - Assets/00.Scenes/DrawScene.unity

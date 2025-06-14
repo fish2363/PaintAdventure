@@ -69,6 +69,15 @@ public class TutorialTrigger : MonoBehaviour
         UIChannel.RaiseEvent(startTipDialogueEvent);
     }
 
+    public void DrawLine()
+    {
+        string[] talk = { "전선을 안 그리셨네요","전선 좀 그려서 넣어줘요","화살표 가운데에서 하면\n더 잘 그려질 거에요", "(찡긋)" };
+        StartTipDialogueEvent startTipDialogueEvent = UIEvents.StartTipDialogueEvent;
+        startTipDialogueEvent.tipText = talk;
+        startTipDialogueEvent.tipTrigger = "IronPlate";
+        UIChannel.RaiseEvent(startTipDialogueEvent);
+    }
+
     public void PushMonster()
     {
         string[] talk = { "큰 친구도 같이\n걸어가는 편이", "더 좋지 않을까요?", "곰돌이만 너무 나와서요" , "큰 친구로도 교체해봐요"};

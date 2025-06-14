@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using DG.Tweening;
 using PDollarGestureRecognizer;
 using System;
@@ -9,7 +10,11 @@ using UnityEngine;
 
 public class GestureRecognizer : MonoBehaviour
 {
+    [SerializeField]
+    private InputReader reader;
+
     private Rect drawArea;
+    public SoundID drawSound;
 
     private List<Gesture> trainingSet = new List<Gesture>();
 
@@ -49,6 +54,15 @@ public class GestureRecognizer : MonoBehaviour
     [SerializeField] private GameObject pointerPrefab;
     private GameObject pointerObject;
 
+    [Header("소리")]
+    [SerializeField] private SoundID bridgeInitSound;
+
+
+    public static bool isOnPanel;
+    private void Awake()
+    {
+        
+    }
 
     private void Start()
     {
@@ -74,6 +88,7 @@ public class GestureRecognizer : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(0))
             {
+                BroAudio.Play(drawSound);
                 pointerObject.SetActive(true);
                 moveHand.SetActive(false);
                 drawingHand.SetActive(true);
@@ -84,13 +99,15 @@ public class GestureRecognizer : MonoBehaviour
                 //Selection.activeGameObject = tmpGesture.gameObject;
 
                 gestureLinesRenderer.Add(currentGestureLineRenderer);
-
+                isOnPanel = true;
                 vertexCount = 0;
             }
             if(Input.GetMouseButtonUp(0))
             {
+                BroAudio.Stop(drawSound);
                 pointerObject.SetActive(false);
                 drawingHand.SetActive(false);
+                isOnPanel = false;
                 moveHand.SetActive(true);
             }
             if (Input.GetMouseButton(0))
@@ -144,7 +161,6 @@ public class GestureRecognizer : MonoBehaviour
 
         for(int i=0;i<gesturesName.Length;i++)
         {
-            Debug.Log("여긴가");
             if (gestureResult.GestureClass == gesturesName[i])
             {
                 GestureActive(gesturesName[i],gestureResult.Score*100);
@@ -195,6 +211,29 @@ public class GestureRecognizer : MonoBehaviour
 
     private void GestureActive(string gestureName,float percent)
     {
+        if (gestureName == "VerticalLine")
+        {
+            RaycastHit hit = new RaycastHit();
+            Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
+
+            Debug.Log("VerticalLine");
+            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, whatIsDrawArea))
+            {
+                if (hit.collider.CompareTag("DrawArea") && hit.collider.TryGetComponent<ElectricArea>(out ElectricArea area))
+                {
+                    if (area.CanLightOn(Line.Vertical))
+                    {
+                        BroAudio.Play(bridgeInitSound);
+                        InitFloatText(gestureLinesRenderer[0].bounds.center, percent);
+                        pointerObject.SetActive(false);
+                    }
+                    InitFloatText(gestureLinesRenderer[0].bounds.center, percent, "LineError");
+                }
+            }
+            else
+                InitFloatText(gestureLinesRenderer[0].bounds.center, percent, "BridgeError");
+            ClearLine();
+        }
         if (gestureName == "Apple")
         {
             Debug.Log("시바");
@@ -218,6 +257,7 @@ public class GestureRecognizer : MonoBehaviour
             GameObject b = Instantiate(treeObject, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             b.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
             InitFloatText(b.transform.position, percent);
+            BroAudio.Play(bridgeInitSound);
 
             ClearLine();
         }
@@ -232,6 +272,7 @@ public class GestureRecognizer : MonoBehaviour
             metalObj = Instantiate(ironPlatePrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
             metalObj.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
             InitFloatText(metalObj.transform.position, percent);
+            BroAudio.Play(bridgeInitSound);
 
             ClearLine();
         }
@@ -268,6 +309,7 @@ public class GestureRecognizer : MonoBehaviour
                     if (currentBridgeObject != null) currentBridgeObject.SetActive(false);
                     currentBridgeObject = hit.collider.GetComponent<BridgeAera>().bridge;
                     currentBridgeObject.SetActive(true);
+                    BroAudio.Play(bridgeInitSound);
                     InitFloatText(currentBridgeObject.transform.position, percent);
                     pointerObject.SetActive(false);
                 }
@@ -276,6 +318,31 @@ public class GestureRecognizer : MonoBehaviour
                 InitFloatText(gestureLinesRenderer[0].bounds.center, percent,"BridgeError");
             ClearLine();
         }
+        if (gestureName == "HorizontalLine")
+        {
+            RaycastHit hit = new RaycastHit();
+            Debug.Log("들어옴");
+            Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
+
+            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, whatIsDrawArea))
+            {
+                Debug.Log("감지됨");
+                if (hit.collider.CompareTag("DrawArea") && hit.collider.TryGetComponent<ElectricArea>(out ElectricArea area))
+                {
+                    if(area.CanLightOn(Line.Horizontal))
+                    {
+                        BroAudio.Play(bridgeInitSound);
+                        InitFloatText(gestureLinesRenderer[0].bounds.center, percent);
+                        pointerObject.SetActive(false);
+                    }
+                    InitFloatText(gestureLinesRenderer[0].bounds.center, percent, "LineError");
+                }
+            }
+            else
+                InitFloatText(gestureLinesRenderer[0].bounds.center, percent, "BridgeError");
+            ClearLine();
+        }
+        
         if (gestureName == "ChickSummon")
         {
             Transform b = Instantiate(chickPrefab, gestureLinesRenderer[0].bounds.center, Quaternion.identity);
@@ -285,24 +352,26 @@ public class GestureRecognizer : MonoBehaviour
             ClearLine();
         }
 
-        if (gestureName == "ObjBalloon")
+        if (gestureName == "BalloonObj")
         {
-            Debug.Log("슝");
             RaycastHit hit = new RaycastHit();
 
             Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
 
-            if (Physics.SphereCast(Camera.main.transform.position, 3f, direction, out hit, Mathf.Infinity, layerMask))
+            if (Physics.SphereCast(Camera.main.transform.position, 6f, direction, out hit, Mathf.Infinity, layerMask))
             {
+                Debug.Log("슝");
                 Transform b = Instantiate(balloonPrefab, hit.collider.transform);
                 if(hit.collider.TryGetComponent(out StaticAnimalObjects staticAnimal))
                     staticAnimal.OnflYAnimal?.Invoke();
                 b.DOScale(0, .2f).From().SetEase(Ease.OutBack);
                 InitFloatText(b.transform.position, percent);
-
-                ClearLine();
             }
+            else
+                InitFloatText(gestureLinesRenderer[0].bounds.center, percent, "Balloon");
+            ClearLine();
         }
+        ClearLine();
         Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
     }
 
@@ -314,6 +383,10 @@ public class GestureRecognizer : MonoBehaviour
             Instantiate(floatText,new Vector3(spawnPos.x,spawnPos.y,spawnPos.z - 1f),Quaternion.identity).GetComponent<TextMeshPro>().text = $"{percent.ToString().Substring(0,2)}% 일치";
         else if(name == "BridgeError")
             Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<color=red>생성 가능 지역이 아닙니다.</color>";
+        else if (name == "LineError")
+            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<color=red>모양이 맞지 않습니다.</color>";
+        else if (name == "Balloon")
+            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<color=red>물체가 닿지 않았습니다</color>";
         else if(name=="Error")
             Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<shake>80% 이상 일치해야 합니다 ({(percent*100).ToString().Substring(0,2)}%)</shake>";
     }

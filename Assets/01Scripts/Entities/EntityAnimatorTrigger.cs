@@ -1,8 +1,10 @@
+using Ami.BroAudio;
 using System;
 using UnityEngine;
 
 public class EntityAnimatorTrigger : MonoBehaviour
 {
+    public SoundID laandingSFX;
     public Action OnAnimationEndTrigger;
     public event Action OnAttackVFXTrigger;
     public event Action OnGetUpEvent;
@@ -19,7 +21,8 @@ public class EntityAnimatorTrigger : MonoBehaviour
         Debug.Log("End");
         OnAnimationEndTrigger?.Invoke();
     }
-    
+
+    private void PlaySoundLanding() => BroAudio.Play(laandingSFX);
     private void PlayAttackVFX() => OnAttackVFXTrigger?.Invoke();
     private void PlayCameraShakeFeedback() => feedback.PlayFeedback("CameraImpulse");
     private void AfterFallingGetUp() => OnGetUpEvent?.Invoke();

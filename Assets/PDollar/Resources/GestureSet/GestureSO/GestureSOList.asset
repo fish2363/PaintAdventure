@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db0607682283854e8e53423df378414, type: 3}
+  m_Name: GestureSOList
+  m_EditorClassIdentifier: 
+  gestureSO:
+  - {fileID: 11400000, guid: b044d8897e0026f4dae03ed575110194, type: 2}
+  - {fileID: 11400000, guid: 53fda3f3340a34b4cb1edbd43c254e9d, type: 2}
+  - {fileID: 11400000, guid: 1fb9d169efc7d36479a96e4130c44c53, type: 2}
+  - {fileID: 11400000, guid: 98b8565fd6d24c3478a23c909348cc1c, type: 2}
+  - {fileID: 11400000, guid: 9173d6e82e5bb8b43872f377595f7eac, type: 2}
+  - {fileID: 11400000, guid: a7c691f39c78c4041b03c05d26bba153, type: 2}
+  - {fileID: 11400000, guid: 4b895274637e14244be3c0bd559f99a8, type: 2}
+  - {fileID: 11400000, guid: 6845e903d7d10f54dbe6fdb7e6a46267, type: 2}
+  - {fileID: 11400000, guid: 8a52e93eaf7a3b94195db3c5b4b3a4ca, type: 2}
+  - {fileID: 11400000, guid: b2a64bf6497630442a86ad3b0b499671, type: 2}
+  - {fileID: 11400000, guid: 88bf1033a13fd484aa292c6f44b13d8c, type: 2}

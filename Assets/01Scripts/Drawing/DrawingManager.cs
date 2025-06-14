@@ -5,6 +5,7 @@ using Unity.Cinemachine;
 
 public class DrawManager : MonoBehaviour,IEntityComponent
 {
+
     public Transform brush;
     public Animator brushAnimator;
     public Camera brushCamera;
@@ -20,6 +21,8 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     private bool isOnDraw;
     public string[] currentCanGestures;
     public StageSystem stageSystem;
+
+
 
     public void Initialize(Entity entity)
     {
@@ -37,10 +40,13 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     }
     private void HandleDrawBtn(bool isHoldPencil)
     {
-        if (!Player.IsCanDraw || isOnDraw || currentCanGestures.Length < 1) return;
+        if (!Player.IsCanDraw || isOnDraw || currentCanGestures.Length < 1 || ESC.Instance.isOn) return;
         SetDrawingMode(isHoldPencil);
+        GestureShow gestureShow = UIEvents.GestureShow;
+        gestureShow.gestureName = null;
+        _player.UIChannel.RaiseEvent(gestureShow);
     }
-
+    
     void Update()
     {
         BrushMovement();
@@ -77,10 +83,6 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     public void SetDrawingMode(bool state)
     {
         FindAnyObjectByType<UIManager>().KakaoTipOut();
-
-        GestureShow gestureShow = UIEvents.GestureShow;
-        gestureShow.gestureName = null;
-        _player.UIChannel.RaiseEvent(gestureShow);
 
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
 

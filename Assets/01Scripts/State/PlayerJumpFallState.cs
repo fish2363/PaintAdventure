@@ -17,7 +17,7 @@ public class PlayerJumpFallState : PlayerAirState
         base.Update();
 
         _flyTime += Time.deltaTime;
-        if (_flyTime > 1f)
+        if (_flyTime > 2f)
             _player.ChangeState("FALL");
 
         if (_mover.IsGroundDetected())

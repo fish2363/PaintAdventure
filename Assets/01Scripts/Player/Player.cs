@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +17,8 @@ public class Player : Entity
     public Transform startPoint;
     public LayerMask whatIsDeadPlace;
     public UnityEvent<bool> OnPlayerChange;
+
+    public SoundID fallSound;
 
     public static bool IsCanDraw;
     public static bool IsCanChange;

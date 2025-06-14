@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MovePlace : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class MovePlace : MonoBehaviour
     private Tweener moveTween;
     private bool isMoving = false;
     private Player player;
+
+    public UnityEvent OnSibal;
 
     [field:SerializeField]
     public bool IsStop { get; set; }
@@ -58,6 +61,7 @@ public class MovePlace : MonoBehaviour
         if (collision.gameObject.CompareTag("Player") && !isMoving)
         {
             MoveToEnd();
+            OnSibal?.Invoke();
         }
     }
 
@@ -68,7 +72,10 @@ public class MovePlace : MonoBehaviour
             .SetEase(Ease.Linear)
             .OnComplete(() => isMoving = false);
     }
-
+    public void StopPause()
+    {
+        PauseMovement(true,0);
+    }
     public void PauseMovement(bool isStop, float duration = 0)
     {
         if (moveTween != null && moveTween.IsPlaying())

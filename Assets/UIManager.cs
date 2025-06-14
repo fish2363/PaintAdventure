@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using DG.Tweening;
 using System;
 using System.Collections;
@@ -7,6 +8,8 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    public SoundID kakaoTalkSound;
+
     [SerializeField]
     private GameEventChannelSO uiChannel;
     [SerializeField]
@@ -59,6 +62,8 @@ public class UIManager : MonoBehaviour
     private bool isClick;
     private bool isWaitClick;
 
+    private bool isOneTime;
+
     private void Awake()
     {
         uiChannel.AddListener<StartTipDialogueEvent>(TipDialogueStartHandle);
@@ -68,6 +73,7 @@ public class UIManager : MonoBehaviour
         uiChannel.AddListener<TutorialEvent>(TutorialEventHandle);
         uiChannel.AddListener<GestureShow>(GestureShowEventHandle);
         InputReader.OnTipKeyEvent += TipUI;
+        InputReader.OnESCKeyEvent += KakaoTipOut;
     }
     private void Start()
     {
@@ -76,6 +82,8 @@ public class UIManager : MonoBehaviour
             startPaper.DOFade(0f, 1f);
         });
     }
+
+
     private void QuestHandle(QuestEvent obj)
     {
         if(!obj.isClear)
@@ -128,6 +136,7 @@ public class UIManager : MonoBehaviour
     private void TipUI()
     {
         if (isProgress) return;
+        if (currentDialogue == null) return;
 
         isProgress = true;
         KakaoTipIn();
@@ -158,6 +167,7 @@ public class UIManager : MonoBehaviour
         uiChannel.RemoveListener<QuestEvent>(QuestHandle);
 
         InputReader.OnTipKeyEvent -= TipUI;
+        InputReader.OnESCKeyEvent -= KakaoTipOut;
     }
 
     private void GestureShowEventHandle(GestureShow obj)
@@ -209,7 +219,7 @@ public class UIManager : MonoBehaviour
         {
             TutorialEvent tutorialEvent = UIEvents.TutorialEvent;
             tutorialEvent.skipKey = KeyCode.C;
-            tutorialEvent.tutorialText = "<swing><color=red>C키</color></swing>를 눌러 <bounce>그림</bounce> 덧그리기";
+            tutorialEvent.tutorialText = "<swing><color=red>C</color></swing>키를 눌러 <bounce>그림</bounce>을 그려주세요";
             Player.IsCanDraw = true;
             TutorialEventHandle(tutorialEvent);
             tipTextTrigger = "";
@@ -232,7 +242,7 @@ public class UIManager : MonoBehaviour
         if (tipTextTrigger == "IronPlate")
         {
             QuestEvent questEvnet = UIEvents.QuestEvent;
-            questEvnet.text = "<swing><color=red>IronPlate</color></swing>를 소환해서\n버튼으로<bounce>밀어보세요</bounce>";
+            questEvnet.text = "<swing><color=red>다리</color></swing>를 그려서\n알 맞은 순서로\n<bounce>버튼을 누르세요</bounce>";
             questEvnet.isClear = false;
             questEvnet.duration = 3f;
             uiChannel.RaiseEvent(questEvnet);
@@ -261,9 +271,12 @@ public class UIManager : MonoBehaviour
         KakaoUIFade();
         DOVirtual.DelayedCall(0.3f,()=>
         {
+            if(isOneTime)
+                BroAudio.Play(kakaoTalkSound);
             tipNewText.gameObject.SetActive(true);
             currentDialogue = obj.tipText;
             tipTextTrigger = obj.tipTrigger;
+            isOneTime = true;
         });
     }
 }

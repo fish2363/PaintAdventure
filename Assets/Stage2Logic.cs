@@ -1,8 +1,12 @@
+using Ami.BroAudio;
 using UnityEngine;
 using UnityEngine.Playables;
 
 public class Stage2Logic : MonoBehaviour
 {
+    [SerializeField] private SoundID stageBGM;
+    [SerializeField] private SoundID boomSFX;
+
     [Header("¹ÌÄ¡°Ô ±ÍÂú´Ù")]
     [SerializeField] private PlayableDirector firstDirector;
     [Header("¹ÌÄ¡°Ô ±ÍÂú2´Ù")]
@@ -11,6 +15,12 @@ public class Stage2Logic : MonoBehaviour
     [Header("Á¹¸®´Ù")]
     [SerializeField] private PlayableDirector thirdDirector;
     [SerializeField] private PlayableDirector thirdExitDirector;
+
+    private void Start()
+    {
+        BroAudio.Play(stageBGM);
+    }
+    public void Boom() => BroAudio.Play(boomSFX);
     public void PushFirstButton(bool isbuttonOn)
     {
         if (isbuttonOn)
@@ -42,4 +52,5 @@ public class Stage2Logic : MonoBehaviour
             thirdExitDirector.Play();
         }
     }
+    public void StopMusic() => BroAudio.Stop(stageBGM);
 }

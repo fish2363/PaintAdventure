@@ -22,6 +22,8 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
     public event Action OnChangeKeyEvent;
     public event Action OnESCKeyEvent;
 
+    public Action OnChangeEmoge;
+
     public event Action OnTipKeyEvent;
 
     private bool isOnDraw=false;
@@ -48,6 +50,7 @@ public class InputReader : ScriptableObject,PlayerInput.IPlayerActions
 
     public void OnDraw(InputAction.CallbackContext context)
     {
+        if (GestureRecognizer.isOnPanel) return;
         if (context.performed)
         {
             if(!isDrawing)
