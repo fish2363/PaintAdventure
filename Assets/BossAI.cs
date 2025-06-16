@@ -2,9 +2,16 @@
 using System.Collections;
 using UnityEngine.Playables;
 using Unity.Cinemachine;
+using DG.Tweening;
+using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class BossAI : MonoBehaviour
 {
+    [SerializeField]
+    private GameEventChannelSO uiChannel;
+
     public Transform pointA;
     public Transform pointB;
     public Transform player;           
@@ -21,22 +28,33 @@ public class BossAI : MonoBehaviour
     public float bulletSpeed = 10f;   // 총알 속도
 
     public string damageTag = "PlayerAttack";     // 충돌 감지할 태그
-    public int maxHits = 3;                       // 최대 맞을 수 있는 횟수
-    private int currentHits = 0;                  // 현재 맞은 횟수
-    public PlayableDirector cutsceneDirector;     // 연결할 Timeline
+    private int currentHits = 3;                  // 현재 맞은 횟수
+    private int plateHits = 3;                  // 현재 맞은 횟수
 
     private bool isDead = false;    
+    private bool isDamage = false;    
 
     private float lastAttackTime;
     private bool movingToB = true;
     private float moveTimer = 0f;
     private bool isWaitingAtPoint = false;
 
+    private bool isRotation = false;
+
     private enum BossState { Idle, Attacking }
     private BossState currentState = BossState.Idle;
 
     private Coroutine currentCoroutine;
     private Animator animator;
+    [SerializeField]
+    private ParticleSystem danger;
+    [SerializeField]
+    private ParticleSystem hitParticle;
+    [SerializeField] private CinemachineCamera cinemachine;
+
+    [SerializeField]
+    private TextMeshPro hpText;
+    [SerializeField] private Image panel;
 
     private void Start()
     {
@@ -44,46 +62,71 @@ public class BossAI : MonoBehaviour
         lastAttackTime = Time.time;
         currentCoroutine = StartCoroutine(IdleRoutine());
     }
+    public void Damage(GameObject bomb)
+    {
+        if (isDead) return;
+        isDamage = true;
+        --currentHits;
+        Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
+        Destroy(bomb);
+        hitParticle.Play();
+
+        StartCoroutine(DieAndPlayCutscene());
+        
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (isDead) return;
-
-        if (other.CompareTag(damageTag))
+        Debug.Log(other.gameObject.name);
+        if (other.CompareTag("MoveFlatform"))
         {
-            currentHits++;
-            Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
-            Destroy(other);
-            if (currentHits >= maxHits)
-            {
-                StartCoroutine(DieAndPlayCutscene());
-            }
+            BossCollisionFlatform();
         }
+    }
+    public void BossUI()
+    {
+        QuestEvent questEvnet = UIEvents.QuestEvent;
+        questEvnet.text = "풍선으로 폭탄을 날려서 공격하세요\n바닥이 부서지지 않게 지키세요";
+        questEvnet.isClear = false;
+        questEvnet.duration = 3f;
+        uiChannel.RaiseEvent(questEvnet);
+    }
+
+    public void BossCollisionFlatform()
+    {
+        --plateHits;
+        hpText.text = $"{plateHits}";
+        Camera.main.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
+        DOTween.To(() => cinemachine.Lens.Dutch, x => cinemachine.Lens.Dutch = x, 180f, 1f);
+        DOVirtual.DelayedCall(2f,()=> DOTween.To(() => cinemachine.Lens.Dutch, x => cinemachine.Lens.Dutch = x, 0f, 1f));
     }
     private IEnumerator DieAndPlayCutscene()
     {
-        isDead = true;
-
         if (animator != null)
-            animator.Play("Armature_IDLE");
+        animator.Play("Armature_Dollgin"); // 정지 상태로 대기
+
 
         // 현재 움직임/코루틴 정지
         if (currentCoroutine != null)
             StopCoroutine(currentCoroutine);
+        yield return new WaitForSeconds(3f); // 약간의 딜레이
 
-        currentState = BossState.Idle;
+        if (currentHits <= 0)
+        {
+            Debug.Log("보스 사망. 컷씬 시작");
 
-        Debug.Log("보스 사망. 컷씬 시작");
+            isDead = true;
+            yield return new WaitForSeconds(0.5f); // 약간의 딜레이
 
-        yield return new WaitForSeconds(0.5f); // 약간의 딜레이
-
-        // Timeline 재생
-        if (cutsceneDirector != null)
-            cutsceneDirector.Play();
+            panel.DOFade(1f,3f).OnComplete(()=>SceneManager.LoadScene("Ending"));
+        }
+        else
+            currentState = BossState.Idle;
+        isDamage = false;
     }
     private void Update()
     {
-        if (isDead) return; // 죽었으면 아무것도 안 함
+        if (isDead || isDamage) return; // 죽었으면 아무것도 안 함
 
         if (currentState == BossState.Idle)
         {
@@ -103,13 +146,17 @@ public class BossAI : MonoBehaviour
 
     private void LookAtPlayer()
     {
+        if (isRotation) return;
         Vector3 direction = (player.position - transform.position).normalized;
         direction.y = 0f; // 수직 회전은 무시
 
         if (direction.magnitude > 0.01f)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * lookSpeed);
+            Quaternion offset = Quaternion.Euler(0, 90f, 0); // 필요에 따라 -90도나 다른 값으로 조절
+
+            Quaternion finalRotation = lookRotation * offset;
+            transform.rotation = Quaternion.Slerp(transform.rotation, finalRotation, Time.deltaTime * lookSpeed);
         }
     }
 
@@ -141,8 +188,6 @@ public class BossAI : MonoBehaviour
     {
         isWaitingAtPoint = true;
 
-        if (animator != null) animator.SetBool("isMoving", false);
-
         yield return new WaitForSeconds(waitAtPointTime);
 
         movingToB = !movingToB;
@@ -166,26 +211,23 @@ public class BossAI : MonoBehaviour
     {
         currentState = BossState.Attacking;
 
-        if (animator != null)
-        {
-            animator.SetBool("isMoving", false);
-            animator.SetTrigger("attack");
-        }
-
         Debug.Log("보스 공격 시작");
 
         int patternIndex = Random.Range(0, 2);
         switch (patternIndex)
         {
             case 0:
-                yield return StartCoroutine(Pattern1());
+                currentCoroutine = StartCoroutine(Pattern1());
+                yield return currentCoroutine;
                 break;
             case 1:
-                yield return StartCoroutine(Pattern2());
+                currentCoroutine = StartCoroutine(Pattern2());
+                yield return currentCoroutine;
                 break;
         }
 
         Debug.Log("보스 공격 종료");
+        currentCoroutine = null;
 
         lastAttackTime = Time.time;
         currentCoroutine = StartCoroutine(IdleRoutine());
@@ -193,40 +235,31 @@ public class BossAI : MonoBehaviour
 
     private IEnumerator Pattern1()
     {
-        if (animator != null)
-            animator.Play("Armature_IDLE"); // 정지 상태로 대기
-        yield return new WaitForSeconds(2f);
+        isRotation = true;
+        int patternIndex = Random.Range(0, 2);
+        Transform movePoint = patternIndex == 0 ? pointA : pointB;
+        transform.DOMove(movePoint.position, 1f);
 
-        // Step 2: 살짝 뒤로 이동 (부드럽게)
-        Vector3 backDir = -transform.forward;
-        Vector3 startPos = transform.position;
-        Vector3 backPos = startPos + backDir * 2f; // 뒤로 2미터
+        animator.Play("Armature_Dollgin"); // 정지 상태로 대기
+        danger.Play();
+        yield return new WaitForSeconds(4.3f);
+        danger.Stop();
 
-        float backTime = 0.3f;
-        float timer = 0f;
-        while (timer < backTime)
-        {
-            transform.position = Vector3.Lerp(startPos, backPos, timer / backTime);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-        transform.position = backPos;
+        Quaternion lookRotation = Quaternion.LookRotation(Vector3.down);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * lookSpeed);
+        yield return new WaitForSeconds(1f);
 
-        yield return new WaitForSeconds(0.1f); // 살짝 텀 주기
-
-        // Step 3: 플레이어 방향으로 돌진
         if (player != null)
         {
-            Vector3 dashDir = (player.position - transform.position).normalized;
-            float dashDistance = 10f;
+            float dashDistance = 50f;
             float dashSpeed = 20f;
-            Vector3 targetPos = transform.position + dashDir * dashDistance;
+            Vector3 targetPos = transform.position + Vector3.down * dashDistance;
 
             float dashTimer = 0f;
             float dashDuration = dashDistance / dashSpeed;
 
             if (animator != null)
-                animator.Play("Armature_Dollgin");
+                animator.Play("Armature_AWAKE");
 
             while (dashTimer < dashDuration)
             {
@@ -238,6 +271,7 @@ public class BossAI : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.3f); // 후 정리 시간
+        isRotation = false;
     }
 
     private IEnumerator Pattern2()
@@ -245,24 +279,15 @@ public class BossAI : MonoBehaviour
         // Step 1: 기 모으는 시간
         if (animator != null)
             animator.Play("Armature_Shoot");
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
-        // Step 2: 총알 2개 발사
-        if (player != null && bulletPrefab != null && firePoint != null)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                Vector3 dir = (player.position - firePoint.position).normalized;
+        Vector3 dir = (player.position - firePoint.position).normalized;
 
-                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
-                if (rb != null)
-                    rb.linearVelocity = dir * bulletSpeed;
-
-                yield return new WaitForSeconds(0.5f); // 총알 사이 간격
-            }
-        }
+        if (rb != null)
+            rb.linearVelocity = dir * bulletSpeed;
 
         yield return new WaitForSeconds(0.3f); // 후 정리 시간
     }

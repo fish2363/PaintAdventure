@@ -29,6 +29,7 @@ public class EntityMover : MonoBehaviour, IEntityComponent
     [SerializeField] private LayerMask whatIsGround;
 
     public bool CanManualMove { get; set; } = true;
+    public bool CanJump { get; set; } = true;
     public bool CanRotateBody { get; set; } = true;
 
     private Player _player;

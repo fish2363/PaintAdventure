@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4c7638f6ce6aa46a31b60a75a1c290, type: 3}
   m_Name: BalloonObj
   m_EditorClassIdentifier: 
-  gestureImage: {fileID: 21300000, guid: 35263c35391d9494ea2f606837e16b50, type: 3}
+  gestureImage: {fileID: 21300000, guid: 211bbb9703f740347bd8f3794094618e, type: 3}
   gestureName: "\uD48D\uC120"
   gestureFileName: BalloonObj

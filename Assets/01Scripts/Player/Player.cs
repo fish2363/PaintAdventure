@@ -36,6 +36,11 @@ public class Player : Entity
         IsCanDraw = s;
     }
 
+    public void ChangeCanCharecter(bool s)
+    {
+        IsCanChange = s;
+    }
+
     public void SaveToSecondPos(Transform trans)
     {
         if (trans == null) secondPos = null;

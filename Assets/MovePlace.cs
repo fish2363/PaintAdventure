@@ -13,17 +13,30 @@ public class MovePlace : MonoBehaviour
     private Vector3 moveDelta;
 
     private Tweener moveTween;
+    [SerializeField]
     private bool isMoving = false;
     private Player player;
 
     public UnityEvent OnSibal;
+    public UnityEvent OnArrive;
 
     [field:SerializeField]
     public bool IsStop { get; set; }
 
+    private bool isEnd;
+
+    [SerializeField] private Transform left;
+    [SerializeField] private Transform right;
+    [SerializeField] private Transform Middle;
+    private bool isAlreadyMove;
+
+    [SerializeField]
+    private PushButton[] sibaaHardCodingbbbbbbbbbbbbbb;
+    
+
     private void OnEnable()
     {
-      player =   FindAnyObjectByType<Player>();
+        player = FindAnyObjectByType<Player>();
         player.OnDeadEvent.AddListener(ComebackPoint);
     }
     private void OnDisable()
@@ -37,7 +50,7 @@ public class MovePlace : MonoBehaviour
         transform.position = startPoint.position;
         lastPosition = transform.position;
     }
-
+    
     private void FixedUpdate()
     {
         moveDelta = transform.position - lastPosition;
@@ -46,7 +59,7 @@ public class MovePlace : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("CanPush"))
         {
             Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
             if (rb != null && moveDelta != Vector3.zero)
@@ -58,8 +71,9 @@ public class MovePlace : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !isMoving)
+        if ((collision.gameObject.CompareTag("Player") && !isMoving || collision.gameObject.CompareTag("CanPush")) && isEnd == false)
         {
+            player.GetCompo<EntityMover>().CanJump = false;
             MoveToEnd();
             OnSibal?.Invoke();
         }
@@ -68,10 +82,51 @@ public class MovePlace : MonoBehaviour
     public void MoveToEnd()
     {
         isMoving = true;
+        Debug.Log("¤µ¤²");
         moveTween = transform.DOMove(endPoint.position, moveDuration)
             .SetEase(Ease.Linear)
-            .OnComplete(() => isMoving = false);
+            .OnComplete(() =>
+            { isMoving = false;
+                player.GetCompo<EntityMover>().CanJump = true;
+                OnArrive?.Invoke();
+                isEnd = true;
+            });
     }
+
+    public void MoveToValue(int direction)
+    {
+        if (isMoving) return;
+
+        Transform move = isAlreadyMove ? SibalMiddle() : Direction(direction);
+
+
+        isMoving = true;
+        transform.DOMove(move.position, 1f).SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                if(isAlreadyMove)
+                {
+                    isAlreadyMove = false;
+                    for (int i = 0; i < sibaaHardCodingbbbbbbbbbbbbbb.Length; i++)
+                        sibaaHardCodingbbbbbbbbbbbbbb[i].Unlock();
+                }
+                else
+                    isAlreadyMove = true;
+                isMoving = false;
+                player.GetCompo<EntityMover>().CanJump = true;
+            });
+    }
+    private Transform SibalMiddle()
+    {
+        
+        return Middle;
+    }
+
+    private Transform Direction(int direction)
+    {
+        return direction > 0 ? right : left;
+    }
+
     public void StopPause()
     {
         PauseMovement(true,0);

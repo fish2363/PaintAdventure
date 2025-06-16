@@ -10,6 +10,7 @@ TagManager:
   - Flower
   - Tree
   - CanPush
+  - MoveFlatform
   layers:
   - Default
   - TransparentFX
@@ -29,8 +30,8 @@ TagManager:
   - ObjText
   - DrawObj
   - ESC
-  - 
-  - 
+  - FlyObj
+  - Boss
   - 
   - 
   - 

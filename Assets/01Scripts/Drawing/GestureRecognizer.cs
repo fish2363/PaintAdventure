@@ -358,7 +358,7 @@ public class GestureRecognizer : MonoBehaviour
 
             Vector3 direction = (gestureLinesRenderer[0].bounds.center - Camera.main.transform.position).normalized;
 
-            if (Physics.SphereCast(Camera.main.transform.position, 6f, direction, out hit, Mathf.Infinity, layerMask))
+            if (Physics.SphereCast(Camera.main.transform.position, 10f, direction, out hit, Mathf.Infinity, layerMask))
             {
                 Debug.Log("½¹");
                 Transform b = Instantiate(balloonPrefab, hit.collider.transform);
@@ -394,7 +394,8 @@ public class GestureRecognizer : MonoBehaviour
     {
         if (gestureLinesRenderer.Count < 1) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(Camera.main.transform.position, gestureLinesRenderer[0].bounds.center - Camera.main.transform.position);
+        Gizmos.DrawRay(Camera.main.transform.position, gestureLinesRenderer[0].bounds.center - Camera.main.transform.position);
+        Gizmos.DrawWireSphere(Camera.main.transform.position, 10f);
         Gizmos.color = Color.white;
     }
 

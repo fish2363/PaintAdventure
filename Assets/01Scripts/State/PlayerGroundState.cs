@@ -84,7 +84,7 @@ public class PlayerGroundState : EntityState
 
     private void HandleJumpKeyPress()
     {
-        if (_mover.CanManualMove&&_mover.IsGroundDetected() && _player.CurrentPlayer().playerName == "Bear")
+        if (_mover.CanManualMove&&_mover.IsGroundDetected() && _player.CurrentPlayer().playerName == "Bear" && _mover.CanJump)
         {
             _player.ChangeState("JUMP");
         }
