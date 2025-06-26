@@ -27,19 +27,22 @@ public class GesturePaperManager : MonoBehaviour,IPointerEnterHandler,IPointerEx
         }
         canvasGroup = GetComponent<CanvasGroup>();
     }
-    public void HideUI()
+    public void HideUI(bool dd)
     {
-        int value = isHide ? 0 : 1;
+        int value = dd ? 0 : 1;
         canvasGroup.alpha = value;
         isHide = !isHide;
     }
 
     public void SetGesturePicture(string[] name)
     {
-        float spreadAngle = -60f; // 전체 펼쳐질 각도
+        for(int i=0;i<gestures.Count;i++)
+            Destroy(gestures[i].gameObject);
+        gestures.Clear();
+        originalRotations.Clear();
+        float spreadAngle = -60f;
         float startAngle = 60f;
         float angleStep = spreadAngle / (name.Length - 1);
-        gestures.Clear();
 
         for (int i = 0; i < name.Length; i++)
         {

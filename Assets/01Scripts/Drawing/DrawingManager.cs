@@ -42,9 +42,7 @@ public class DrawManager : MonoBehaviour,IEntityComponent
     {
         if (!Player.IsCanDraw || isOnDraw || currentCanGestures.Length < 1 || ESC.Instance.isOn) return;
         SetDrawingMode(isHoldPencil);
-        GestureShow gestureShow = UIEvents.GestureShow;
-        gestureShow.gestureName = null;
-        _player.UIChannel.RaiseEvent(gestureShow);
+        FindAnyObjectByType<GesturePaperManager>().HideUI(!isHoldPencil);
     }
     
     void Update()

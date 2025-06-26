@@ -41,7 +41,13 @@ public class PushButton : MonoBehaviour
         questEvnet.duration = 3f;
         UIChannel.RaiseEvent(questEvnet);
     }
-
+    public void QuestClear()
+    {
+        QuestEvent questEvnet = UIEvents.QuestEvent;
+        questEvnet.isClear = true;
+        questEvnet.duration = 3f;
+        UIChannel.RaiseEvent(questEvnet);
+    }
     public void Unlock()
     {
         isLocked = false;

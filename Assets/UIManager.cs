@@ -174,10 +174,10 @@ public class UIManager : MonoBehaviour
     {
         if (obj.gestureName == null)
         {
-            paperManager.HideUI();
             return;
         }
-        paperManager.SetGesturePicture(obj.gestureName);
+        else
+            paperManager.SetGesturePicture(obj.gestureName);
     }
 
     private void SkillUIChangeHandle(SkillUIEvent obj)

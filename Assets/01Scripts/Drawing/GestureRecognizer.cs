@@ -388,7 +388,7 @@ public class GestureRecognizer : MonoBehaviour
         else if (name == "Balloon")
             Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<color=red>물체가 닿지 않았습니다</color>";
         else if(name=="Error")
-            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<shake>80% 이상 일치해야 합니다 ({(percent*100).ToString().Substring(0,2)}%)</shake>";
+            Instantiate(floatText, new Vector3(spawnPos.x, spawnPos.y, spawnPos.z - 1f), Quaternion.identity).GetComponent<TextMeshPro>().text = $"<shake>80% 이상 일치해야 합니다</shake>";
     }
     private void OnDrawGizmos()
     {

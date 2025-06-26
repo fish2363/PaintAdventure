@@ -63,6 +63,8 @@ public class StageSystem : ExtendedMono
     [ContextMenu("StageClear")]
     public void StageClear()
     {
+        
+
         IsClear = false;
         FindAnyObjectByType<Player>().SaveToSecondPos(null);
         FindAnyObjectByType<Player>().GetCompo<EntityMover>().RbCompo.isKinematic = true;
@@ -90,6 +92,9 @@ public class StageSystem : ExtendedMono
             stageNameEvent.duration = 3f;
             uiChannel.RaiseEvent(stageNameEvent);
 
+            GestureShow gestureShow = UIEvents.GestureShow;
+            gestureShow.gestureName = stageSet[currentStage].drawPictureName;
+            uiChannel.RaiseEvent(gestureShow);
 
             stageSet[currentStage].stage.SetActive(true);
             FindAnyObjectByType<Player>().GetCompo<EntityMover>().RbCompo.isKinematic = false;
